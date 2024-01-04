@@ -1,5 +1,5 @@
-import {Service} from 'typedi';
-import {knex} from '../../db';
+import { Service } from 'typedi';
+
 import { Db } from '../../db/db.class';
 import { Member, Wallet } from 'models';
 import { join } from 'path';

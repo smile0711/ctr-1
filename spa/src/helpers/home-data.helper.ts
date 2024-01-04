@@ -51,9 +51,5 @@ export const homeDataHelper = {
     "price": 100000,
     "description": "",
   },
-  "championhome": {
-    "price": 0,
-    "description": "This is a special home for Champion Donors to Cyhbertown Revival",
-  },
 
 } as const;

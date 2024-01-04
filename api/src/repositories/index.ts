@@ -1,4 +1,3 @@
-export * from './admin/admin.repository';
 export * from './avatar/avatar.repository';
 export * from './block/block.repository';
 export * from './colony/colony.repository';
