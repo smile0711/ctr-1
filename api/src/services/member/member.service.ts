@@ -2,21 +2,22 @@ import * as _ from 'lodash';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
-import { Service } from 'typedi';
+import {Service} from 'typedi';
 
 import {
   AvatarRepository,
+  MapLocationRepository,
   MemberRepository,
+  PlaceRepository,
+  RoleAssignmentRepository,
+  RoleRepository,
   TransactionRepository,
   WalletRepository,
-  PlaceRepository,
-  MapLocationRepository,
-  RoleAssignmentRepository,
 } from '../../repositories';
-import { Member, Place } from '../../types/models';
-import { MemberInfoView } from '../../types/views';
-import { SessionInfo } from 'session-info.interface';
-import { Request, Response } from 'express';
+import {Member} from '../../types/models';
+import {MemberInfoView} from '../../types/views';
+import {SessionInfo} from 'session-info.interface';
+import {Request, Response} from 'express';
 
 /** Service for dealing with members */
 @Service()
@@ -42,8 +43,33 @@ export class MemberService {
     private placeRepository: PlaceRepository,
     private mapLocationRespository: MapLocationRepository,
     private roleAssignmentRepository: RoleAssignmentRepository,
+    private roleRepository: RoleRepository,
   ) {}
-
+  
+  public async canAdmin(memberId: number): Promise<boolean>{
+    const roleAssignments = await this.roleAssignmentRepository.getByMemberId(memberId);
+    
+    if (
+      roleAssignments.find(assignment => {
+        return (
+          [
+            this.roleRepository.roleMap.Admin,
+            this.roleRepository.roleMap.CityMayor,
+            this.roleRepository.roleMap.DeputyMayor,
+            this.roleRepository.roleMap.CityCouncil,
+            this.roleRepository.roleMap.SecurityCaptain,
+            this.roleRepository.roleMap.SecurityChief,
+            this.roleRepository.roleMap.SecurityLieutenant,
+            this.roleRepository.roleMap.SecurityOffice,
+            this.roleRepository.roleMap.SecuritySergeant,
+          ]);
+      })
+    ) {
+      return true;
+    }
+    return false;
+  }
+  
   /**
    * Creates a new member with the given email, username, and password. If successful, distributes
    * daily login bonuses, and returns an encoded member token.
@@ -52,6 +78,7 @@ export class MemberService {
    * @param password  raw member password
    * @returns promise resolving in the session token for the newly created member
    */
+  
   public async createMemberAndLogin(
     email: string,
     username: string,
