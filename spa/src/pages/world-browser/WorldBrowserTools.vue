@@ -30,10 +30,12 @@
       class="btn-ui">Upload</router-link>
     </div>
     <div v-if="canAdmin">
-      <span href=""
-            class="btn-ui">Message to All</span>
-      <span href=""
-            class="btn-ui">Inbox to All</span>
+      <div v-if="isColony">
+        <span href=""
+              class="btn-ui">Message to All</span>
+        <span href=""
+              class="btn-ui">Inbox to All</span>
+      </div>
       <span href=""
             class="btn-ui">Update</span>
       <router-link :to="{ name: 'worldAccessRights' }"
@@ -55,16 +57,27 @@ export default Vue.extend({
       canAdmin: false,
       data: null,
       mallId: null,
+      reference: null,
+      isColony: false,
     };
   },
   methods: {
     async getMallId(){
-      this.mallId = await this.$http.get('/place/mall')
+      this.mallId = await this.$http.get('/place/mall');
     },
     async checkAdmin() {
+      if (this.$store.data.place.type === "public") {
+        this.reference = `/place/${this.$store.data.place.slug}/can_admin`;
+        this.isColony = false;
+      } else if (this.$store.data.place.type === "shop") {
+        this.reference = "/place/mall/can_admin";
+        this.isColony = false;
+      } else {
+        this.reference = `/colony/${this.$store.data.place.id}/can_admin`;
+        this.isColony = true;
+      }
       try {
-        this.adminCheck = await this.$http.get(
-          `/colony/${this.$store.data.place.id}/can_admin`);
+        this.adminCheck = await this.$http.get(this.reference);
         this.canAdmin = true;
       } catch (error) {
         this.canAdmin = false;

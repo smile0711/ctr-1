@@ -1,9 +1,19 @@
-import { Request, Response } from 'express';
+import {Request, response, Response} from 'express';
 import { PlaceService } from '../services';
 import { Container } from 'typedi';
 
 class PlaceController {
   constructor(private placeService: PlaceService) {}
+  
+  /** Get Admin status for the specific place's slug */
+  public async canAdmin(request: Request, response: Response): Promise<void> {
+    const { slug } = request.params;
+    if (!slug || typeof slug !== 'string') {
+      response.status(400).json({ error: 'invalid or missing slug' });
+    }
+    const admin = await this.placeService.canAdmin(slug);
+    response.status(200).json({ admin });
+  }
 
   /** Provides data about the place with the given slug */
   public async getPlace(request: Request, response: Response): Promise<void> {
