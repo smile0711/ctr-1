@@ -1,18 +1,50 @@
 import {Request, response, Response} from 'express';
-import { PlaceService } from '../services';
+import { PlaceService, MemberService } from '../services';
 import { Container } from 'typedi';
 
 class PlaceController {
-  constructor(private placeService: PlaceService) {}
+  constructor(
+   private placeService: PlaceService,
+   private memberService: MemberService,
+  ) {}
   
   /** Get Admin status for the specific place's slug */
   public async canAdmin(request: Request, response: Response): Promise<void> {
-    const { slug } = request.params;
+    const { apitoken } = request.headers;
+    const { slug} = request.params;
+    const { id } = request.params;
+    
     if (!slug || typeof slug !== 'string') {
-      response.status(400).json({ error: 'invalid or missing slug' });
+      response.status(400).json({ error: 'invalid or missing place slug' });
     }
-    const admin = await this.placeService.canAdmin(slug);
-    response.status(200).json({ admin });
+    
+    // the following is needed to make sure shops find the mall's place id
+    let place_id = 0;
+    if (id === undefined) {
+      console.log('id missing');
+      const place = await this.placeService.findBySlug(slug);
+      place_id = place.id;
+    } else {
+      console.log('id given');
+      place_id = Number.parseInt(id);
+    }
+    
+    try {
+      const session = this.memberService.decodeMemberToken(<string>apitoken);
+      if (!session) {
+        response.status(400).json({
+          error: 'Invalid or missing token.',
+        });
+        return;
+      }
+      const result = await this.placeService.canAdmin(slug, place_id, session.id);
+      console.log('result', result);
+      response.status(200).json({status: 'success'});
+      return;
+    } catch (error) {
+      console.error(error);
+      response.status(400).json({ error });
+    }
   }
 
   /** Provides data about the place with the given slug */
@@ -40,4 +72,5 @@ class PlaceController {
   }
 }
 const placeService = Container.get(PlaceService);
-export const placeController = new PlaceController(placeService);
+const memberService = Container.get(MemberService);
+export const placeController = new PlaceController(placeService, memberService);

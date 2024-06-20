@@ -4,6 +4,7 @@ import { Model } from './model';
 export interface Place extends Model {
   assets_dir?: string;
   description?: string;
+  id: number;
   name: string;
   slug?: string;
   status: number;
