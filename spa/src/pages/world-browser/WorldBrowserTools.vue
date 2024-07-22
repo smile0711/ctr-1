@@ -67,8 +67,11 @@ export default Vue.extend({
     },
     async checkAdmin() {
       if (this.$store.data.place.type === "public") {
-        this.reference = `/place/can_admin/${this.$store.data.place.slug}`;
-        this.reference = `${this.reference}/${this.$store.data.place.id}`;
+        this.reference = `/place/can_admin/${
+          this.$store.data.place.slug
+        }/${
+          this.$store.data.place.id
+        }`;
         this.isColony = false;
       } else if (this.$store.data.place.type === "shop") {
         this.reference = "/place/can_admin/mall";
@@ -78,8 +81,10 @@ export default Vue.extend({
         this.isColony = true;
       }
       try {
-        this.adminCheck = await this.$http.get(this.reference);
-        this.canAdmin = true;
+        await this.$http.get(this.reference).then((response) => {
+          this.canAdmin = response.data.result;
+        });
+        //this.canAdmin = true;
       } catch (error) {
         console.log(error);
         this.canAdmin = false;

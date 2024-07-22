@@ -69,18 +69,6 @@ export class BlockRepository {
         },
       );
   }
-  
-  public async removeIdFromAssignment(
-    blockId: number, 
-    memberId: number, 
-    roleId: number,
-  ): Promise<any> {
-    return this.db.knex('role_assignment')
-      .where('place_id', blockId)
-      .where('member_id', memberId)
-      .where('role_id', roleId)
-      .del();
-  }
 
   public async getMapLocationAndPlacesByBlockId(blockId: number): Promise<any> {
     const locations = await this.db.knex

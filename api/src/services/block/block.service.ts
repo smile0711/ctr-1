@@ -75,7 +75,7 @@ export class BlockService {
     }
     if (newOwner !== 0) {
       if (oldOwner !== 0) {
-        await this.blockRepository.removeIdFromAssignment(blockId, oldOwner, ownerCode);
+        await this.roleAssignmentRepository.removeIdFromAssignment(blockId, oldOwner, ownerCode);
         const response: any = await this.memberRepository.getPrimaryRoleName(oldOwner);
         if (response.length !== 0) {
           const primaryRoleId = response[0].primary_role_id;
@@ -96,7 +96,7 @@ export class BlockService {
       if (oldDeputies !== newDeputies[index]) {
         if (newDeputies[index] === 0) {
           try {
-            this.blockRepository.removeIdFromAssignment(blockId, oldDeputies, deputyCode);
+            this.roleAssignmentRepository.removeIdFromAssignment(blockId, oldDeputies, deputyCode);
           } catch (e) {
             console.log(e);
           }
@@ -113,7 +113,7 @@ export class BlockService {
           }
         } else {
           try {
-            this.blockRepository.removeIdFromAssignment(blockId, oldDeputies, deputyCode);
+            this.roleAssignmentRepository.removeIdFromAssignment(blockId, oldDeputies, deputyCode);
             this.memberRepository.getPrimaryRoleName(oldDeputies)
               .then((response: any) => {
                 if (response.length !== 0) {

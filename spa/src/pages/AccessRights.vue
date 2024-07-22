@@ -162,8 +162,18 @@ export default Vue.extend({
               this.$store.data.place.id
             }/can_manage_access`;
         break;
-      default:
+      case "public":
+        endpoint =
+            `/place/can_manage_access/${
+              this.$store.data.place.slug
+            }/${
+              this.$store.data.place.id
+            }`;
         break;
+      default:
+        this.access = false;
+        this.loaded = true;
+        return;
       }
 
       try {
@@ -191,6 +201,13 @@ export default Vue.extend({
         infopoint = `/colony/${
           this.$store.data.place.id
         }/getAccessInfo/`;
+        break;
+      case "public":
+        infopoint = `/place/getAccessInfo/${
+          this.$store.data.place.slug
+        }/${
+          this.$store.data.place.id
+        }`;
         break;
       default:
         break;
@@ -224,6 +241,13 @@ export default Vue.extend({
         updatepoint = `/colony/${
           this.$store.data.place.id
         }/postAccessInfo/`;
+        break;
+      case "public":
+        updatepoint = `/place/postAccessInfo/${
+          this.$store.data.place.slug
+        }/${
+          this.$store.data.place.id
+        }`;
         break;
       default:
         break;

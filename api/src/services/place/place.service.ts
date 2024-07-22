@@ -5,8 +5,10 @@ import {
   ObjectInstanceRepository,
   RoleRepository,
   RoleAssignmentRepository,
+  MemberRepository,
 } from '../../repositories';
 import { Place, ObjectInstance } from '../../types/models';
+import console from 'console';
 
 /** Service for dealing with blocks */
 @Service()
@@ -16,18 +18,61 @@ export class PlaceService {
     private objectInstanceRepository: ObjectInstanceRepository,
     private roleRepository: RoleRepository,
     private roleAssignmentRepository: RoleAssignmentRepository,
+    private memberRepository: MemberRepository,
   ) {}
 
   public async canAdmin(slug: string, placeId: number, memberId: number):
    Promise<boolean> {
     const placeRoleId = await this.findRoleIdsBySlug(slug);
+    const roleAssignments = await this.roleAssignmentRepository.getByMemberId(memberId);
+    
+    //check if admin even if there is no assigned roles for the place
     if (!placeRoleId) {
-      throw new Error('Place roleId not found');
-    } else {
-      console.log(placeRoleId);
+      if (
+        roleAssignments.find(assignment => {
+          return (
+            [
+              this.roleRepository.roleMap.Admin,
+              this.roleRepository.roleMap.CityMayor,
+              this.roleRepository.roleMap.DeputyMayor,
+            ].includes(assignment.role_id)
+          );
+        })
+      ) {
+        return true;
+      }
     }
     
+    //check if worker or admin with an assigned roles for the place
+    if (placeRoleId) {
+      if (
+        roleAssignments.find(assignment => {
+          return (
+            [
+              this.roleRepository.roleMap.Admin,
+              this.roleRepository.roleMap.CityMayor,
+              this.roleRepository.roleMap.DeputyMayor,
+            ].includes(assignment.role_id) ||
+          ([
+            placeRoleId.owner,
+            placeRoleId.deputy,
+          ].includes(assignment.role_id) &&
+           assignment.place_id === placeId)
+          );
+        })
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  public async canManageAccess(slug: string, placeId: number, memberId: number): Promise<boolean> {
+    const placeRoleId = await this.findRoleIdsBySlug(slug);
     const roleAssignments = await this.roleAssignmentRepository.getByMemberId(memberId);
+    
+    //if no roles assignable, access rights is closed to all
+    if(!placeRoleId) return false;
     
     if (
       roleAssignments.find(assignment => {
@@ -37,17 +82,14 @@ export class PlaceService {
             this.roleRepository.roleMap.CityMayor,
             this.roleRepository.roleMap.DeputyMayor,
           ].includes(assignment.role_id) ||
-        ([
-          placeRoleId.owner,
-          placeRoleId.deputy,
-        ].includes(assignment.role_id) &&
+        ([placeRoleId.owner].includes(assignment.role_id) &&
          assignment.place_id === placeId)
         );
       })
     ) {
       return true;
     }
-    else return false;
+    return false;
   }
   
   public async findById(placeId: number): Promise<Place> {
@@ -57,9 +99,106 @@ export class PlaceService {
   public async findBySlug(slug: string): Promise<Place> {
     return await this.placeRepository.findBySlug(slug);
   }
+  
+  public async getAccessInfoByUsername(slug: string, placeId: number): Promise<object> {
+    const placeRoleId = await this.findRoleIdsBySlug(slug);
+    return await this
+      .roleAssignmentRepository
+      .getAccessInfoByUsername(placeId, placeRoleId.owner, placeRoleId.deputy);
+  }
 
   public async getPlaceObjects(placeId: number): Promise<ObjectInstance[]> {
     return await this.objectInstanceRepository.findByPlaceId(placeId);
+  }
+  
+  public async postAccessInfo(
+    slug: string,
+    placeId: number,
+    givenDeputies: any,
+    givenOwner: string): Promise<void> {
+    const placeRoleId = await this.findRoleIdsBySlug(slug);
+    /**
+     * old is coming from database
+     * new is coming from access rights page
+     */
+    const deputyCode = placeRoleId.deputy;
+    const ownerCode = placeRoleId.owner;
+    let oldOwner = null;
+    let newOwner = null;
+    const oldDeputies = [0,0,0,0,0,0,0,0];
+    const newDeputies = [0,0,0,0,0,0,0,0];
+    const data = await this
+      .roleAssignmentRepository
+      .getAccessInfoByID(placeId, ownerCode, deputyCode);
+    if (data.owner.length > 0) {
+      oldOwner = data.owner[0].member_id;
+    } else {
+      oldOwner = 0;
+    }
+    try {
+      newOwner = await this.memberRepository.findIdByUsername(givenOwner);
+      newOwner = newOwner[0].id;
+    } catch (error) {
+      newOwner = 0;
+    }
+    if (newOwner !== 0) {
+      if (oldOwner !== 0) {
+        await this.roleAssignmentRepository.removeIdFromAssignment(placeId, oldOwner, ownerCode);
+        const response: any = await this.memberRepository.getPrimaryRoleName(oldOwner);
+        if (response.length !== 0) {
+          const primaryRoleId = response[0].primary_role_id;
+          if (ownerCode === primaryRoleId){
+            await this.memberRepository.update(oldOwner, {primary_role_id: null});
+          }
+        }
+      }
+      await this.roleAssignmentRepository.addIdToAssignment(placeId, newOwner, ownerCode);
+    }
+    data.deputies.forEach((deputies, index) => {
+      oldDeputies[index] = deputies.member_id;
+    });
+    for (let i = 0; i < givenDeputies.length; i++) {
+      newDeputies[i] = await this.updateDeputyId(givenDeputies[i]);
+    }
+    oldDeputies.forEach((oldDeputies, index) => {
+      if (oldDeputies !== newDeputies[index]) {
+        if (newDeputies[index] === 0) {
+          try {
+            this.roleAssignmentRepository.removeIdFromAssignment(placeId, oldDeputies, deputyCode);
+          } catch (e) {
+            console.log(e);
+          }
+          if (oldDeputies !== 0) {
+            this.memberRepository.getPrimaryRoleName(oldDeputies)
+              .then((response: any) => {
+                if (response.length !== 0) {
+                  const primaryRoleId = response[0].primary_role_id;
+                  if (primaryRoleId && deputyCode === primaryRoleId) {
+                    this.memberRepository.update(oldDeputies, {primary_role_id: null});
+                  }
+                }
+              });
+          }
+        } else {
+          try {
+            this.roleAssignmentRepository.removeIdFromAssignment(placeId, oldDeputies, deputyCode);
+            this.memberRepository.getPrimaryRoleName(oldDeputies)
+              .then((response: any) => {
+                if (response.length !== 0) {
+                  const primaryRoleId = response[0].primary_role_id;
+                  if (deputyCode === primaryRoleId) {
+                    this.memberRepository.update(oldDeputies, {primary_role_id: null});
+                  }
+                }
+              });
+            this.roleAssignmentRepository
+              .addIdToAssignment(placeId, newDeputies[index], deputyCode);
+          } catch (e) {
+            console.log(e);
+          }
+        }
+      }
+    });
   }
   
   private async findRoleIdsBySlug(slug: string): Promise<{owner: number, deputy: number}> {
@@ -98,5 +237,14 @@ export class PlaceService {
       },
     };
     return roleId[slug];
+  }
+  
+  private async updateDeputyId(deputy: any): Promise<number> {
+    let newDeputies = 0;
+    if (deputy.username !== null) {
+      const result = await this.memberRepository.findIdByUsername(deputy.username);
+      newDeputies = result[0].id;
+    }
+    return newDeputies;
   }
 }
