@@ -1,8 +1,15 @@
+<<<<<<< HEAD
 import {Request, response, Response} from 'express';
+=======
+import { Request, Response } from 'express';
+>>>>>>> master
 import { PlaceService, MemberService } from '../services';
 import { Container } from 'typedi';
 
+import * as badwords from 'badwords-list';
+
 class PlaceController {
+<<<<<<< HEAD
   constructor(
    private placeService: PlaceService,
    private memberService: MemberService,
@@ -96,11 +103,25 @@ class PlaceController {
     }
   }
   
+=======
+  constructor(private placeService: PlaceService, private memberService: MemberService) {}
+
+>>>>>>> master
   /** Provides data about the place with the given slug */
   public async getPlace(request: Request, response: Response): Promise<void> {
     const { slug } = request.params;
     try {
       const place = await this.placeService.findBySlug(slug);
+      response.status(200).json({ place });
+    } catch (error) {
+      console.error(error);
+      response.status(400).json({ error });
+    }
+  }
+
+  public async getPlaceById(request: Request, response: Response): Promise<void> {
+    try {
+      const place = await this.placeService.findById(parseInt(request.params.id));
       response.status(200).json({ place });
     } catch (error) {
       console.error(error);
@@ -119,6 +140,7 @@ class PlaceController {
       response.status(400).json({ error: error.message });
     }
   }
+<<<<<<< HEAD
   
   public async postAccessInfo(request: Request, response: Response): Promise<void> {
     const { apitoken } = request.headers;
@@ -147,6 +169,24 @@ class PlaceController {
       response.status(200).json({success: true});
     } catch (error) {
       console.log(error);
+=======
+
+  public async addStorage(request: Request, response: Response): Promise<void> {
+    const session = this.memberService.decryptSession(request, response);
+    if(!session) return;
+    try {
+      let storageName = request.body.name.toString();
+      storageName = storageName.replace(/[^0-9a-zA-Z \-[\]/()]/g, '');
+      const bannedwords = badwords.regex;
+      if(storageName.match(bannedwords)){
+        throw new Error('You can not use this language on CTR!');  
+      }
+      await this.placeService.addStorage(storageName, session.id);
+      response.status(200).json({status: 'success'});
+    } catch (error) {
+      console.error(error);
+      response.status(400).json({ error: error.message });
+>>>>>>> master
     }
   }
 }

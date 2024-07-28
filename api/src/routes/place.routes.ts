@@ -8,6 +8,7 @@ placeRoutes.get('/:placeId/object_instance',
   (request, response) => placeController.getPlaceObjects(request, response));
 placeRoutes.get('/:slug',
   (request, response) => placeController.getPlace(request, response));
+<<<<<<< HEAD
 placeRoutes.get('/can_admin/:slug/:id?',
   (request, response) => placeController.canAdmin(request, response));
 placeRoutes.get('/can_manage_access/:slug/:id?',
@@ -24,4 +25,11 @@ placeRoutes.post('/:slug/postAccessInfo',
  *
  * end of future api routes
 */
+=======
+placeRoutes.get('/:id',
+  (request, response) => placeController.getPlaceById(request, response));
+placeRoutes.post('/add_storage', (request, response) => 
+  placeController.addStorage(request, response));
+
+>>>>>>> master
 export { placeRoutes };

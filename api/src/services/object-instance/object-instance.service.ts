@@ -45,6 +45,10 @@ export class ObjectInstanceService {
     );
   }
 
+  public async countById(objectId: number): Promise<any> {
+    return await this.objectInstanceRepository.countByObjectId(objectId);
+  }
+
   public async updateObjectPlaceId(objectInstanceId: number, placeId: number): Promise<void> {
     return await this.objectInstanceRepository.updateObjectPlaceId(objectInstanceId, placeId);
   }
@@ -80,7 +84,7 @@ export class ObjectInstanceService {
     const buyerWallet = await this.walletRepository.findById(buyer.wallet_id);
 
     try{
-      if(!object[0].object_price){
+      if(!object[0].object_price && object[0].object_price !== 0){
         throw new Error('The object is not for sale!');
       }
       if(buyerWallet.balance < object[0].object_price){
