@@ -36,6 +36,13 @@ export class PlaceRepository {
     return place;
   }
 
+  public async findStorageByUserID(memberId: number): Promise<any> {
+    return await this.db.place
+      .select('place.name', 'place.id')
+      .where({type: 'storage', member_id: memberId})
+      .orderBy('place.name', 'asc');
+  }
+
   /**
    * Creates a new place with the given parameters.
    * @param placeParams parameters to be used for the new place
@@ -54,6 +61,37 @@ export class PlaceRepository {
     return returning
       ? this.findHomeByMemberId(memberId)
       : undefined;
+  }
+
+  public async updatePlaces(id: number, column: string, content: string): Promise<any> {
+    await this.db.place
+      .where({id: id})
+      .update(column, content);
+  }
+
+  /**
+ * This is to assist with the pagination of the place search
+ * @param type
+ * @return string
+ */
+  public async totalByType(type: string): Promise<any> {
+    return this.db.place.count('id as count').where('type', type);
+  }
+
+  /**
+   * returns results of places by type (pagination)
+   * @param type
+   * @param limit
+   * @param offset
+   * @returns
+   */
+  public async findByType(type: string, limit: number, offset: number): Promise<any> {
+    return this.db.place
+      .select(['place.*'])
+      .where('place.type', type)
+      .orderBy('place.id')
+      .limit(limit)
+      .offset(offset);
   }
 
 }

@@ -8,6 +8,7 @@ import {
   MemberRepository,
   TransactionRepository,
   ObjectInstanceRepository,
+  MallRepository,
 } from '../../repositories';
 
 /** Service for dealing with blocks */
@@ -18,6 +19,7 @@ export class ObjectService {
     private memberRepository: MemberRepository,
     private transactionRepository: TransactionRepository,
     private objectInstanceRepository: ObjectInstanceRepository,
+    private mallRepository: MallRepository,
   ) {}
 
   public static readonly WRL_FILESIZE_LIMIT = 80000;
@@ -27,6 +29,8 @@ export class ObjectService {
   public static readonly STATUS_DELETED = 0;
   public static readonly STATUS_ACTIVE = 1;
   public static readonly STATUS_PENDING = 2;
+  public static readonly STATUS_APPROVED = 3;
+  public static readonly STATUS_INACTIVE = 4;
   public static readonly MALL_EXPIRATION_DAYS = 7;
 
   public async find(objectSearchParams: Partial<Object>): Promise<Object> {
@@ -37,35 +41,102 @@ export class ObjectService {
     return this.objectRepository.findById(objectId);
   }
 
+  public async findByObjectId(objectId: number): Promise<any> {
+    const returnObjects = [];
+    const object = await this.objectRepository.getMallObject(objectId);
+    for (const obj of object) {
+      const instances = await this.objectInstanceRepository.countByObjectId(obj.id);
+      obj.instances = instances;
+      returnObjects.push(obj);
+    }
+    return returnObjects;
+  }
+
+  public async findByUsername(username: string): Promise<any> {
+    const returnObjects = [];
+    const user = await this.memberRepository.findIdByUsername(username);
+    const object = await this.objectRepository.getUserUploadedObjects(user[0].id);
+    for (const obj of object) {
+      const instances = await this.objectInstanceRepository.countByObjectId(obj.id);
+      obj.instances = instances;
+      returnObjects.push(obj);
+    }
+    return returnObjects;
+  }
+
   public async getPendingObjects() {
     return await this.objectRepository.findByStatus(ObjectService.STATUS_PENDING);
   }
 
-  public async getMallForSaleObjects() {
-    const objects = await this.objectRepository.getMallForSale(
-      ObjectService.STATUS_ACTIVE,
-      new Date().toJSON().slice(0, 19).replace('T', ' '),
+  public async getMallForSaleObjects(placeId: number) {
+    const objects = await this.mallRepository.getMallForSale(
+      placeId,
     );
-    for (const obj of objects) {
-      const instances = await this.objectInstanceRepository.countByObjectId(obj.id);
-      obj.instances = instances;
-    }
     return objects;
   }
 
   public async updateStatusApproved(objectId: number) {
+    this.mallRepository.addToMallObjects(objectId);
     const expirationDate = new Date();
     expirationDate.setDate(expirationDate.getDate() + ObjectService.MALL_EXPIRATION_DAYS);
 
     return await this.objectRepository.update(objectId, {
-      status: ObjectService.STATUS_ACTIVE,
+      status: ObjectService.STATUS_APPROVED,
       mall_expiration: expirationDate.toJSON().slice(0, 19).replace('T', ' '),
     });
+  }
+
+  public async updateObjectPlace(objectId: number, shopId: number) {
+    await this.mallRepository.findByObjectId(objectId)
+      .then(data => {
+        if(!data[0]){
+          this.mallRepository.addToMallObjects(objectId);
+        }
+      });
+    await this.mallRepository.updateObjectPlace(objectId, shopId);
+
+    return await this.objectRepository.update(objectId, {
+      status: ObjectService.STATUS_ACTIVE,
+    });
+  }
+
+  public async removeMallObject(objectId: number) {
+    return await this.objectRepository.update(objectId, {
+      status: ObjectService.STATUS_APPROVED,
+    });
+  }
+
+  public async deleteMallObject(objectId: number) {
+    return await this.objectRepository.update(objectId, {
+      status: ObjectService.STATUS_DELETED,
+    });
+  }
+
+  public async increaseQuantity(objectId: number, quantity: number) {
+    this.objectRepository.increaseObjectQuantity(objectId, {
+      quantity: quantity,
+      status: ObjectService.STATUS_APPROVED,
+    });
+  }
+
+  public async updateObjectLimit(objectId: number, limit: number) {
+    this.objectRepository.updateObjectLimit(objectId, limit);
+  }
+  
+  public async updateObjectName(objectId: number, name: string) {
+    this.objectRepository.updateObjectName(objectId, name);
   }
 
   public async updateStatusRejected(objectId: number) {
     return await this.objectRepository.update(objectId, {
       status: ObjectService.STATUS_DELETED,
+    });
+  }
+
+  public async updateObjectQuantity(objectId: number, quantity: number) {
+    return await this.objectRepository.update(objectId, {
+      quantity: quantity,
+      status: ObjectService.STATUS_INACTIVE,
     });
   }
 
@@ -153,6 +224,11 @@ export class ObjectService {
     await this.transactionRepository.createObjectUploadTransaction(member.wallet_id, amount);
   }
 
+  public async performObjectRestockTransaction(memberId: number, amount: number): Promise<void> {
+    const member = await this.memberRepository.findById(memberId);
+    await this.transactionRepository.createObjectRestockTransaction(member.wallet_id, amount);
+  }
+
   /**
    * Refunds the amount for an object upload to a member's wallet
    * @param memberId id of a member
@@ -164,6 +240,14 @@ export class ObjectService {
   ): Promise<void> {
     const member = await this.memberRepository.findById(memberId);
     await this.transactionRepository.createObjectUploadRefundTransaction(member.wallet_id, amount);
+  }
+
+  public async performUnsoldObjectRefundTransaction(
+    memberId: number,
+    amount: number,
+  ): Promise<void> {
+    const member = await this.memberRepository.findById(memberId);
+    await this.transactionRepository.createUnsoldObjectRefundTransaction(member.wallet_id, amount);
   }
 
   public async performObjectPurchaseTransaction(memberId: number, amount: number): Promise<void> {
