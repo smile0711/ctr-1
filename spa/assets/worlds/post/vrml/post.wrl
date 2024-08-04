@@ -99,9 +99,9 @@ type [
 ]
 visibilityLimit 150
 avatarSize [
-.25 1.75 .9
+1 1.75 .9
 ]
-speed 3
+speed 10
 }
 
 DEF main Transform {

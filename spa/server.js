@@ -126,13 +126,6 @@ io.on("connection", async function(socket) {
         io.to(USERS.get(socket).room).emit("SE", msg);
     });
 
-    socket.on('update-object', function(object) {
-        socket.broadcast.emit('update-object', {
-            obj_id: object.obj_id,
-            place_id: object.place_id,
-        });
-    });
-
     //handle shared events
     socket.on("SO", function(msg) {
         console.log(msg);

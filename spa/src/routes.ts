@@ -43,12 +43,11 @@ import UserBanHistory from "@/pages/admin/user/BanHistory.vue";
 import UserBanAdd from "@/pages/admin/user/BanAdd.vue";
 import UserDonor from "@/pages/admin/user/donor.vue";
 import AvatarSearch from "@/pages/admin/avatar/search.vue";
-import PlaceSearch from "@/pages/admin/place/search.vue";
 
 import MallRulesPage from "@/pages/mall/MallRulesPage.vue";
 import MallUploadPage from "@/pages/mall/MallUploadPage.vue";
-import CreatorPage from "@/pages/mall/creator/CreatorPage.vue";
-import MallStaffPage from "@/pages/mall/staff/StaffPage.vue";
+import MallApprovalPage from "@/pages/mall/MallApprovalPage.vue";
+import MallShopPage from "@/pages/mall/MallShopPage.vue";
 
 import ObjectProperties from "./pages/ObjectProperties.vue";
 
@@ -369,14 +368,6 @@ export default [
                     title: "Avatar Search - Admin Panel",
                 },
             },
-            {
-                path: "/admin/place/",
-                component: PlaceSearch,
-                name: "PlaceSearch",
-                meta: {
-                    title: "Places Search - Admin Panel",
-                },
-            },
         ],
     },
     {
@@ -398,30 +389,22 @@ export default [
         },
     },
     {
-        path: "/mall/staff",
-        component: MallStaffPage,
-        name: "mall-staff",
+        path: "/mall/approval",
+        component: MallApprovalPage,
+        name: "mall-approval",
         meta: {
-            title: "Mall Staff Panel",
-            wrapper: false,
+            title: "Mall Upload Approval",
+            wrapper: true,
         },
     },
     {
-        path: "/mall/creator",
-        component: CreatorPage,
-        name: "mall-creator",
+        path: "/mall/shop",
+        component: MallShopPage,
+        name: "mall-shop",
         meta: {
-            title: "Creator Panel",
-            wrapper: false,
+            title: "Objects for Sale",
+            wrapper: true,
         },
-    },
-    {
-        path: "/mall/object/:object_id",
-        components: {
-            default: ObjectProperties,
-        },
-        name: "mall-object-properties",
-        meta: {wrapper: false},
     },
     {
         path: "/object/:object_id",

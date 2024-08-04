@@ -271,10 +271,7 @@ export default Vue.extend({
     },
     reload(){
       window.location.reload();
-    },
-    close(){
-      window.close();
-    },
+    }
   },
   mounted() {
     this.loaded = true;

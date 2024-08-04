@@ -7,7 +7,6 @@ import {
   RoleAssignmentRepository,
   RoleRepository,
   AvatarRepository,
-  PlaceRepository,
 } from '../../repositories';
 
 @Service()
@@ -19,7 +18,6 @@ export class AdminService {
    private roleAssignmentRepository: RoleAssignmentRepository,
    private roleRepository: RoleRepository,
    private avatarRespository: AvatarRepository,
-   private placeRepository: PlaceRepository,
   ) {}
   
   public async addBan(ban_member_id, time_frame, type, assigner_member_id, reason): Promise<void> {
@@ -94,19 +92,6 @@ export class AdminService {
     const total = await this.avatarRespository.totalByStatus(status);
     return {
       avatars: avatars,
-      total: total,
-    };
-  }
-
-  public async updatePlaces(id: number, column: string, content: string): Promise<any> {
-    await this.placeRepository.updatePlaces(id, column, content);
-  }
-
-  public async searchPlaces(type: string, limit: number, offset: number): Promise<any> {
-    const places = await this.placeRepository.findByType(type, limit, offset);
-    const total = await this.placeRepository.totalByType(type);
-    return {
-      places: places,
       total: total,
     };
   }

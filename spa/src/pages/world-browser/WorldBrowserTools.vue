@@ -22,12 +22,13 @@
     </span>
     <br />
     <div v-if="$store.data.place.slug === 'mall'">
-      <router-link 
+    <router-link 
+      :to="{ name: 'mall-shop' }"
+      class="btn-ui">For Sale</router-link>
+    <router-link 
       :to="{ name: 'mall-upload' }"
       class="btn-ui">Upload</router-link>
-      <button class="btn-ui" v-on:click="opener('#/mall/creator')">My Uploads</button>
     </div>
-    <br />
     <div v-if="canAdmin">
       <div v-if="isColony">
         <span href=""

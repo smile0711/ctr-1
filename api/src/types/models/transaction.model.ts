@@ -18,11 +18,9 @@ export enum TransactionReason {
   WeeklyCredit = 'weekly-role-credit',
   ObjectUpload = 'object-upload',
   ObjectUploadRefund = 'object-upload-refund',
-  ObjectUnsoldInstancesRefund = 'object-unsold-instances-refund',
   ObjectPurchase = 'object-purchase',
   ObjectProfit = 'object-profit',
   ObjectSell = 'object-sell',
-  ObjectRestock = 'object-restock',
 }
 
 /** Defines a Transaction object as stored in the db */

@@ -21,10 +21,5 @@ objectInstanceRoutes.post('/update/', (request, response) =>
 objectInstanceRoutes.post('/buy/', (request, response) =>
   objectInstanceController.buyObjectInstance(request, response),
 );
-objectInstanceRoutes.post('/backpack', (request, response) =>
-  objectInstanceController.moveToBackpack(request, response));
-
-objectInstanceRoutes.post('/storage', (request, response) =>
-  objectInstanceController.moveToStorage(request, response));
 
 export { objectInstanceRoutes };
