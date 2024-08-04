@@ -380,7 +380,7 @@ export default Vue.extend({
       this.userMenu = true;
       this.cursorX = e.x;
       this.cursorY = e.y;
-      if(this.cursorY >= window.innerHeight - 150){
+      if(this.cursorY >= window.innerHeight - 90){
         this.menuTop = null;
         this.menuBottom = "5px";
       }
@@ -511,9 +511,7 @@ export default Vue.extend({
           }
           if(this.canModify){
             this.menuMove = true;
-            if(this.$store.data.place.type !== 'shop'){
-              this.menuTake = true;
-            }
+            this.menuTake = true;
           }
         }
       }
@@ -542,18 +540,10 @@ export default Vue.extend({
         }
     },
     async canAdmin(){
-      let admin = null;
-      if(this.$store.data.place.slug === 'mall' || this.$store.data.place.type === 'shop'){
-        admin = await this.$http.get("/mall/can_admin", {
-          'id': this.$store.data.user.id
-        });
-      }
-      if(this.$store.data.place.slug === 'fleamarket'){
-        admin = await this.$http.get("/fleamarket/can_admin", {
-          'id': this.$store.data.user.id
-        });
-      }
-      if(admin && admin.data.status === 'success'){
+      const admin = await this.$http.get("/mall/can_admin", {
+        'id': this.$store.data.user.id
+      });
+      if(admin.data.status === 'success'){
         this.canModify = true;
         if(this.$store.data.view3d){
           this.canInteractWithObject = true;
@@ -660,14 +650,6 @@ export default Vue.extend({
       ;
       this.$socket.on("disconnect", () => {
         this.systemMessage("Chat server disconnected. Please refresh to reconnect.");
-      });
-      this.$socket.on("update-object", () => {
-        if(this.activePanel === 'userBackpack'){
-          setTimeout(this.loadUserBackpack, 50);
-        }
-        if(this.activePanel === 'backpack'){
-          setTimeout(this.loadBackpack, 50);
-        }
       });
     },
     dropObject() {

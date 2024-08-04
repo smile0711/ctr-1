@@ -110,7 +110,6 @@ export class PlaceService {
   public async getPlaceObjects(placeId: number): Promise<ObjectInstance[]> {
     return await this.objectInstanceRepository.findByPlaceId(placeId);
   }
-<<<<<<< HEAD
   
   public async postAccessInfo(
     slug: string,
@@ -247,14 +246,5 @@ export class PlaceService {
       newDeputies = result[0].id;
     }
     return newDeputies;
-=======
-
-  public async addStorage(name: string, memberId: number): Promise<any> {
-    await this.placeRepository.create({name: name, type: 'storage', member_id: memberId});
-  }
-
-  public async updatePlaces(id: number, column: string, content: string): Promise<any> {
-    await this.placeRepository.updatePlaces(id, column, content);
->>>>>>> master
   }
 }

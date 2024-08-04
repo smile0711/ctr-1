@@ -122,21 +122,11 @@ export default Vue.extend({
     async getPlace(): Promise<void> {
       this.debugMsg("get place");
       document.title = `${this.$store.data.place.name  } - Cybertown`;
-      let objectResponse = null;
-      this.sharedObjects = [];
       try {
-        if(this.$store.data.place.type === 'shop'){
-          const objectResponse = await this.$http.get(`/mall/objects/${this.$store.data.place.id}`);
-          objectResponse.data.objects.forEach(obj => {
-            if(obj.status === 1){
-              this.sharedObjects.push(obj);
-            };
-          })
-        } else {
-          objectResponse = await this.$http.get(`/place/${  this.$store.data.place.id 
+        const objectInstanceResponse = await this.$http.get(`/place/${  this.$store.data.place.id 
         }/object_instance`);
-        this.sharedObjects = objectResponse.data.object_instance;
-        }
+
+        this.sharedObjects = objectInstanceResponse.data.object_instance;
       } catch(e) {
         console.error(e);
       }
@@ -187,7 +177,7 @@ export default Vue.extend({
       this.debugMsg("joined room success", this.$store.data.place.id);
       if(this.$store.data.view3d){
         const { viewpointPosition, viewpointOrientation } = X3D.getBrowser(this.browser);
-          this.$socket.emit("AV", {
+        this.$socket.emit("AV", {
           detail: {
             pos: [
               viewpointPosition.x,
@@ -201,7 +191,7 @@ export default Vue.extend({
               viewpointOrientation.angle,
             ],
           },
-        });       
+        });
       }
     },
     moveObject(objectId): void {
@@ -443,27 +433,22 @@ export default Vue.extend({
       }
     },
     async onSharedObjectEvent(event): Promise<void> {
-      if(this.$store.data.view3d){
-        const browser = X3D.getBrowser();
-        this.sharedObjects.forEach(sharedObject => {
-          const object = this.sharedObjectsMap.get(sharedObject.id);
-          browser.currentScene.removeRootNode(object);
-          this.sharedObjectsMap.delete(sharedObject.id);
-        });
+      const browser = X3D.getBrowser();
+      this.sharedObjects.forEach(sharedObject => {
+        const object = this.sharedObjectsMap.get(sharedObject.id);
+        browser.currentScene.removeRootNode(object);
+        this.sharedObjectsMap.delete(sharedObject.id);
+      });
       this.sharedObjects = [];
+
       const objectInstanceResponse = await this.$http.get(`/place/${  this.$store.data.place.id 
       }/object_instance`);
+
       this.sharedObjects = objectInstanceResponse.data.object_instance;
-        this.sharedObjectsMap = new Map();
-        this.sharedObjects.forEach((object) => {
-          this.addSharedObject(object, browser);
-        });
-      } else {
-        this.sharedObjects = [];
-        const objectInstanceResponse = await this.$http.get(`/place/${  this.$store.data.place.id 
-        }/object_instance`);
-        this.sharedObjects = objectInstanceResponse.data.object_instance;
-      }
+      this.sharedObjectsMap = new Map();
+      this.sharedObjects.forEach((object) => {
+        this.addSharedObject(object, browser);
+      });
     },
     onVersion(event: { version: string }): void {
       if (event.version !== environment.packageVersion) {
@@ -494,24 +479,12 @@ export default Vue.extend({
         },
 
       }
-      if(this.$store.data.place.type === 'shop'){
-        await this.$http.post(`/mall/${  objectId  }/position`, location);
-        /*
-        /* This crashes the server.
-        /*
-        this.$socket.emit('SO', {
-          event: 'move',
-          objectId: objectId,
-          detail: location
-        });*/
-      } else {
-        await this.$http.post(`/object_instance/${  objectId  }/position`, location);
-        this.$socket.emit('SO', {
-          event: 'move',
-          objectId: objectId,
-          detail: location
-        });
-      }
+      await this.$http.post(`/object_instance/${  objectId  }/position`, location);
+      this.$socket.emit('SO', {
+        event: 'move',
+        objectId: objectId,
+        detail: location
+      });
     },
     sendSharedEvent(event): void {
       this.$socket.emit("SE", event.detail);
@@ -605,19 +578,13 @@ export default Vue.extend({
     },
     startSocketListeners(): void {
       this.$socket.on("VERSION", event => this.onVersion(event));
-      this.$socket.on("update-object", (object) => {
-        if(object.place_id === this.$store.data.place.id){
-          setTimeout(this.onSharedObjectEvent, 50)
-          }
-        }
-      );
-      this.$socket.on("SO", event => this.onSharedObjectEvent(event));
     },
     start3DSocketListeners(): void {
       this.$socket.on("AV", event => this.onAvatarMoved(event));
       this.$socket.on("AV:del", event => this.onAvatarRemoved(event));
       this.$socket.on("AV:new", event => this.onAvatarAdded(event));
       this.$socket.on("SE", event => this.onSharedEvent(event));
+      this.$socket.on("SO", event => this.onSharedObjectEvent(event));
     },
     async startX3D(): Promise<any> {
       if (!this.browser) {

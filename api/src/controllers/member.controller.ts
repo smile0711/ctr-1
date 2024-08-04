@@ -6,7 +6,7 @@ import validator from 'validator';
 import * as badwords from 'badwords-list';
 
 import { sendPasswordResetEmail, sendPasswordResetUnknownEmail } from '../libs';
-import { MemberService, HomeService, PlaceService } from '../services';
+import { MemberService, HomeService } from '../services';
 import { SessionInfo } from 'session-info.interface';
 
 class MemberController {
@@ -27,10 +27,7 @@ class MemberController {
    *
    * @param memberService service for interacting with member models
    */
-  constructor(
-    private memberService: MemberService, 
-    private homeService: HomeService,
-    private placeService: PlaceService) {}
+  constructor(private memberService: MemberService, private homeService: HomeService) {}
 
   public async getAdminLevel(request: Request, response: Response): Promise<object> {
     const session = this.memberService.decryptSession(request, response);
@@ -375,49 +372,6 @@ class MemberController {
     }
   }
 
-  public async getStorage(request: Request, response: Response): Promise<any> {
-    const session = this.memberService.decryptSession(request, response);
-    if (!session) return;
-    try {
-      const storage = await this.memberService.getStorage(session.id);
-      response.status(200).json({ storage });
-    } catch (error) {
-      console.log(error);
-      response.status(400).json({ error });
-    }
-  }
-
-  public async updateStorage(request: Request, response: Response): Promise<any> {
-    const session = this.memberService.decryptSession(request, response);
-    if(!session) return;
-    try {
-      const storage = await this.memberService.getStorageById(parseInt(request.body.id));
-      if(!storage){
-        throw new Error('Storage area not found!');
-      }
-      if(storage && storage.member_id !== session.id){
-        throw new Error('You do not own this storage area');
-      }
-      let storageName = request.body.content.toString();
-      storageName = storageName.replace(/[^0-9a-zA-Z \-[\]/()]/g, '');
-      const bannedwords = badwords.regex;
-      if(storageName.match(bannedwords)){
-        throw new Error('You can not use this language on CTR!');  
-      }
-      if(storage && storage.member_id === session.id){
-        this.placeService.updatePlaces(
-          parseInt(request.body.id.toString()),
-          'name',
-          storageName,
-        );
-        response.status(200).json({status: 'success'});
-      }
-    } catch (error) {
-      console.log(error);
-      response.status(400).json({ error });
-    }
-  }
-
   /**
    * Checks that the given login information is valid.
    * @param email user email
@@ -471,5 +425,4 @@ class MemberController {
 }
 const memberService = Container.get(MemberService);
 const homeService = Container.get(HomeService);
-const placeService = Container.get(PlaceService);
-export const memberController = new MemberController(memberService, homeService, placeService);
+export const memberController = new MemberController(memberService, homeService);

@@ -8,9 +8,8 @@ url
 
 NavigationInfo {
 visibilityLimit 125
-speed 2.5
 avatarSize [
-.25 1.75 .75
+.6 1.75 .75
 ]
 }
 Transform {
