@@ -11,11 +11,12 @@ export interface User {
     };
     roleName?: string;
     username?: string;
-    token?: string;
+    token?: string; // Kept for backward compatibility
     admin?: boolean;
     hasHome?: boolean;
     chatdefault?: number;
     firstname?: string;
+    isAuthenticated?: boolean;
 }
 
 export interface Place {
@@ -63,18 +64,35 @@ const appStore = Vue.observable<AppStore>({
         x3dReady: false,
         view3d: false,
         user: {
-            token: localStorage.getItem("token"),
+            token: localStorage.getItem("token"), // Kept for backward compatibility
+            isAuthenticated: false
         },
         place: {},
     },
     methods: {
         destroySession() {
+            // Clear token from localStorage (for backward compatibility)
             localStorage.removeItem("token");
-            appStore.data.user = {};
+
+            // Clear cookies by making a request to logout endpoint
+            fetch('/api/member/logout', {
+                method: 'POST',
+                credentials: 'include'
+            }).catch(err => console.error('Error during logout:', err));
+
+            // Update store state
+            appStore.data.user = { isAuthenticated: false };
             appStore.data.isUser = false;
         },
         setToken(token: string): void {
+            // Store token in the store for backward compatibility
             appStore.data.user.token = token;
+
+            // Mark user as authenticated
+            appStore.data.user.isAuthenticated = true;
+            appStore.data.isUser = true;
+
+            // Keep token in localStorage for backward compatibility
             localStorage.setItem("token", token);
         },
         setView3d(value: boolean): void {
@@ -91,11 +109,39 @@ const appStore = Vue.observable<AppStore>({
             ) {
                 userData.avatar.gestures = JSON.parse(userData.avatar.gestures);
             }
+
+            // If we have a token, mark as authenticated
+            if (userData.token) {
+                userData.isAuthenticated = true;
+                appStore.data.isUser = true;
+            }
+
             appStore.data.user = { ...appStore.data.user, ...userData };
+
             if (appStore.data.user.chatdefault === 1) {
-	        appStore.data.view3d = true;
-	    }
+                appStore.data.view3d = true;
+            }
         },
+        refreshToken(): Promise<void> {
+            return fetch('/api/member/refresh-token', {
+                method: 'POST',
+                credentials: 'include'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Token refresh failed');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Update token in store for backward compatibility
+                if (data.token) {
+                    appStore.data.user.token = data.token;
+                    localStorage.setItem("token", data.token);
+                }
+                return data;
+            });
+        }
     },
 });
 export default appStore;

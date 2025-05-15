@@ -24,6 +24,8 @@ memberRoutes.get('/getdonorlevel', (request, response) =>
   memberController.getDonorLevel(request, response),
 );
 memberRoutes.post('/login', (request, response) => memberController.login(request, response));
+memberRoutes.post('/refresh-token', (request, response) => memberController.refreshToken(request, response));
+memberRoutes.post('/logout', (request, response) => memberController.logout(request, response));
 memberRoutes.get('/session', (request, response) => memberController.session(request, response));
 memberRoutes.post('/update_password', (request, response) =>
   memberController.updatePassword(request, response),

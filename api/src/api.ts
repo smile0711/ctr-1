@@ -4,6 +4,7 @@ import express from 'express';
 const fileUpload = require('express-fileupload');
 import { Request, Response } from 'express';
 import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
 import {
   adminRoutes,
   avatarRoutes,
@@ -34,9 +35,13 @@ app.use(fileUpload());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
+app.use(cookieParser());
 
 app.use((request, response, next) => {
-  response.header('Access-Control-Allow-Origin', '*');
+  // For production, this should be set to the specific origin of your frontend
+  const origin = request.headers.origin;
+  response.header('Access-Control-Allow-Origin', origin || '*');
+  response.header('Access-Control-Allow-Credentials', 'true');
   response.header(
     'Access-Control-Allow-Headers',
     'Origin, X-Requested-With, Content-Type, Accept, Authorization, apitoken',

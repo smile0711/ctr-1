@@ -21,7 +21,7 @@ class HomeController {
   ) {}
 
   public async getHome(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     let userId = null;
 
@@ -75,7 +75,7 @@ class HomeController {
   }
 
   public async createHome(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
 
     const {
@@ -173,7 +173,7 @@ class HomeController {
   }
 
   public async moveHome(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
 
     const {
@@ -213,7 +213,7 @@ class HomeController {
   }
 
   public async updateHome(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
 
     const {

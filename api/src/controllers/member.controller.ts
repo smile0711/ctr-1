@@ -34,14 +34,14 @@ class MemberController {
     private placeService: PlaceService) {}
 
   public async getAdminLevel(request: Request, response: Response): Promise<object> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     const accessLevel = await this.memberService.getAccessLevel(session.id);
     response.status(200).json({ accessLevel });
   }
 
   public async getDonorLevel(request: Request, response: Response): Promise<string> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     try {
       const donorLevel = await this.memberService.getDonorLevel(session.id);
@@ -56,7 +56,7 @@ class MemberController {
    * @route /api/member/info
    */
   public async getInfo(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     try {
       let memberInfo;
@@ -86,7 +86,7 @@ class MemberController {
   }
 
   public async getMemberId(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if(!session) return;
 
     try {
@@ -99,7 +99,7 @@ class MemberController {
   }
 
   public async check3d(request: Request, response: Response): Promise<any> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if(!session) return;
     try {
       const user3d = await this.memberService.check3d(request.params.username);
@@ -111,7 +111,7 @@ class MemberController {
   }
 
   public async getActivePlaces(request: Request, response: Response): Promise<any> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if(!session) return;
     try {
       const places = await this.memberService.getActivePlaces();
@@ -123,7 +123,7 @@ class MemberController {
   }
 
   public async updateLatestActivity(request: Request, response: Response): Promise<void>{
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     try {
       await this.memberService.updateLatestActivity(session.id);
@@ -134,7 +134,7 @@ class MemberController {
   }
 
   public async getPrimaryRoleName(request: Request, response: Response): Promise<string> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     try {
       const PrimaryRoleName = await this.memberService.getPrimaryRoleName(session.id);
@@ -147,7 +147,7 @@ class MemberController {
   public async getRoles(request: Request, response: Response): Promise<object> {
     const id  = request.params.id;
     console.log(id);
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     if (id !== undefined) {
       const admin = await this.memberService.getAccessLevel(session.id);
@@ -174,7 +174,7 @@ class MemberController {
   }
 
   public async updateInfo(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     const { id } = session;
     const { firstName, lastName, chatdefault } = request.body;
@@ -193,7 +193,7 @@ class MemberController {
    * 0 = banned
    */
   public async isBanned(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     try {
       const data = await this.memberService.isBanned(session.id);
       response.status(200).json({ data });
@@ -209,11 +209,27 @@ class MemberController {
       this.validateLoginInput(username, password);
       const token = await this.memberService.login(username, password);
       const tokenData = await this.memberService.decodeMemberToken(token);
+      const refreshToken = await this.memberService.generateRefreshToken(tokenData.id);
       const homeInfo = await this.homeService.getHome(tokenData.id);
+
+      // Set httpOnly cookies for both tokens
+      response.cookie('accessToken', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 60 * 60 * 1000, // 1 hour
+        sameSite: 'strict',
+      });
+
+      response.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        sameSite: 'strict',
+      });
 
       response.status(200).json({
         message: 'Login Successful',
-        token,
+        token, // Still include token in response for backward compatibility
         username,
         hasHome: !!homeInfo,
       });
@@ -223,8 +239,58 @@ class MemberController {
     }
   }
 
+  /** Controller method for refreshing access token using refresh token */
+  public async refreshToken(request: Request, response: Response): Promise<void> {
+    try {
+      const refreshToken = request.cookies.refreshToken;
+
+      if (!refreshToken) {
+        throw new Error('Refresh token not found');
+      }
+
+      const newAccessToken = await this.memberService.refreshAccessToken(refreshToken);
+
+      // Set new access token as httpOnly cookie
+      response.cookie('accessToken', newAccessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 60 * 60 * 1000, // 1 hour
+        sameSite: 'strict',
+      });
+
+      response.status(200).json({
+        message: 'Token refreshed successfully',
+        token: newAccessToken, // Include for backward compatibility
+      });
+    } catch (error) {
+      console.error(error);
+      response.status(401).json({ error: 'Invalid refresh token' });
+    }
+  }
+
+  /** Controller method for logging out a user by clearing cookies */
+  public async logout(request: Request, response: Response): Promise<void> {
+    // Clear the access token cookie
+    response.clearCookie('accessToken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+    });
+
+    // Clear the refresh token cookie
+    response.clearCookie('refreshToken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+    });
+
+    response.status(200).json({
+      message: 'Logout successful',
+    });
+  }
+
   public async joinedPlace(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     try {
       const placeId = request.body.place_id;
@@ -286,15 +352,32 @@ class MemberController {
   /** Controller method for getting a session */
   public async session(request: Request, response: Response): Promise<void> {
     try {
-      const { apitoken } = request.headers;
-      if (_.isUndefined(apitoken)) {
-        throw new Error('Missing token.');
+      // Get token from cookies first, then fall back to header
+      let token = request.cookies.accessToken;
+      const refreshToken = request.cookies.refreshToken;
+      //const { apitoken } = request.headers;
+      //const token = cookieToken || apitoken;
+
+      if (!token && !refreshToken) {
+        throw new Error('Missing refresh token.');
+      } else if (!token) {
+        token = await this.memberService.refreshAccessToken(refreshToken);
+        response.cookie('accessToken', token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          maxAge: 60 * 60 * 1000, // 1 hour
+          sameSite: 'strict',
+        });
       }
-      const session = this.memberService.decodeMemberToken(<string>apitoken);
+
+      const session = await this.memberService.decodeMemberToken(token);
+
       if (session) {
         // refresh client token with latest from database
-        const token = await this.memberService.getMemberToken(session.id);
+        const newAccessToken = await this.memberService.getMemberToken(session.id);
+        const refreshToken = await this.memberService.generateRefreshToken(session.id);
         const { banned, banInfo } = await this.memberService.isBanned(session.id);
+
         if (!banned) {
           await this.memberService.maybeGiveDailyCredits(session.id);
           const homeInfo = await this.homeService.getHome(session.id);
@@ -302,9 +385,25 @@ class MemberController {
           session.hasHome = !!homeInfo;
           session.chatdefault = chatdefault;
         }
+
+        // Set httpOnly cookies for both tokens
+        response.cookie('accessToken', newAccessToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          maxAge: 60 * 60 * 1000, // 1 hour
+          sameSite: 'strict',
+        });
+
+        response.cookie('refreshToken', refreshToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+          sameSite: 'strict',
+        });
+
         response.status(200).json({
           message: 'success',
-          token,
+          token: newAccessToken, // Include for backward compatibility
           user: session,
           banned: banned,
           banInfo: banInfo,
@@ -338,9 +437,27 @@ class MemberController {
       }
 
       const token = await this.memberService.createMemberAndLogin(email, username, password);
+      const tokenData = await this.memberService.decodeMemberToken(token);
+      const refreshToken = await this.memberService.generateRefreshToken(tokenData.id);
+
+      // Set httpOnly cookies for both tokens
+      response.cookie('accessToken', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 60 * 60 * 1000, // 1 hour
+        sameSite: 'strict',
+      });
+
+      response.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        sameSite: 'strict',
+      });
+
       response.status(200).json({
         message: 'Signup Completed',
-        token,
+        token, // Include for backward compatibility
         username,
       });
     } catch (error) {
@@ -351,7 +468,7 @@ class MemberController {
 
   /** Controller method for updating a user's avatar */
   public async updateAvatar(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     const { id, username } = session;
     const { avatarId } = request.body;
@@ -364,9 +481,26 @@ class MemberController {
     try {
       await this.memberService.updateAvatar(id, avatarId);
       const token = await this.memberService.getMemberToken(id);
+      const refreshToken = await this.memberService.generateRefreshToken(id);
+
+      // Set httpOnly cookies for both tokens
+      response.cookie('accessToken', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 60 * 60 * 1000, // 60 minutes
+        sameSite: 'strict',
+      });
+
+      response.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        sameSite: 'strict',
+      });
+
       response.status(200).json({
         message: 'Success',
-        token,
+        token, // Include for backward compatibility
         username,
       });
     } catch (error) {
@@ -379,7 +513,7 @@ class MemberController {
 
   /** Controller method for updating a user's password */
   public async updatePassword(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     const { id } = session;
     const { newPassword, newPassword2, currentPassword } = request.body;
@@ -415,7 +549,7 @@ class MemberController {
   }
 
   public async updatePrimaryRoleId(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     const { id } = session;
     const { primaryRoleId } = request.body;
@@ -430,9 +564,9 @@ class MemberController {
   }
 
   public async getBackpack(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
-    
+
     const username = request.params.username;
 
     try {
@@ -446,7 +580,7 @@ class MemberController {
   }
 
   public async getOnlineUsers(request: Request, response: Response): Promise<any> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     try {
       const returnUsers = [];
@@ -475,7 +609,7 @@ class MemberController {
   }
 
   public async getStorage(request: Request, response: Response): Promise<any> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     const member_id = parseInt(request.body.member_id);
     try {
@@ -488,7 +622,7 @@ class MemberController {
   }
 
   public async updateStorage(request: Request, response: Response): Promise<any> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if(!session) return;
     try {
       const storage = await this.memberService.getStorageById(parseInt(request.body.id));

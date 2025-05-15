@@ -15,7 +15,7 @@ class ClubController {
   ) {}
   
   public async checkMembership(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) {
       response.status(401).json({message: 'Session not found or invalid'});
       return;
@@ -46,7 +46,7 @@ class ClubController {
   }
 
   public async createClub(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) {
       response.status(401).json({ message: 'Session not found or invalid' });
       return;
@@ -75,7 +75,7 @@ class ClubController {
   }
   
   public async changeMemberStatus(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) {
       response.status(401).json({message: 'Session not found or invalid'});
       return;
@@ -95,7 +95,7 @@ class ClubController {
   }
 
   public async deleteClub(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) {
       response.status(401).send();
       return;
@@ -118,7 +118,7 @@ class ClubController {
   }
   
   public async getClubMemberCount(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) {
       response.status(401).send();
       return;
@@ -135,7 +135,7 @@ class ClubController {
   
   //get members of a club
   public async getClubMembers(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) {
       response.status(401).json({message: 'Session not found or invalid'});
       return;
@@ -154,7 +154,7 @@ class ClubController {
   }
   
   public async getMemberStatus(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) {
       response.status(401).json({message: 'Session not found or invalid'});
       return;
@@ -247,7 +247,7 @@ class ClubController {
   }
 
   public async searchClubs(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) {
       response.status(401).send();
       return;

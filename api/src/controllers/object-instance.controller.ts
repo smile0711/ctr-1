@@ -13,7 +13,7 @@ class ObjectInstanceController {
 
   /** Stores the position of an object instance in the database */
   public async updateObjectInstancePosition(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
 
     try {
@@ -36,7 +36,7 @@ class ObjectInstanceController {
       if(place.slug === 'fleamarket'){
         adminStatus = await this.fleaMarketService.canAdmin(session.id);
       }
-      if (!adminStatus && objectInstance.member_id != session.id) {
+      if (!adminStatus && objectInstance.member_id !== session.id) {
         throw new Error('Not the owner of this object');
       }
 
@@ -54,7 +54,7 @@ class ObjectInstanceController {
   }
 
   public async dropObjectInstance(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
 
     try {
@@ -74,11 +74,11 @@ class ObjectInstanceController {
       const objectInstance = await this.objectInstanceService.find(id);
       const place = await this.placeService.findById(Number.parseInt(request.body.placeId));
 
-      if (place.slug !== 'fleamarket' && place.member_id != session.id) {
+      if (place.slug !== 'fleamarket' && place.member_id !== session.id) {
         throw new Error('Not the owner of this place');
       }
 
-      if (objectInstance.member_id != session.id) {
+      if (objectInstance.member_id !== session.id) {
         throw new Error('Not the owner of this object');
       }
 
@@ -99,7 +99,7 @@ class ObjectInstanceController {
 
   public async updateObjectInstance(request: Request, response: Response): Promise<void> {
     const { apitoken } = request.headers;
-    const session = this.memberService.decodeMemberToken(<string> apitoken);
+    const session = await this.memberService.decodeMemberToken(<string> apitoken);
     if(!session) {
       response.status(400).json({
         error: 'Invalid or missing token.',
@@ -108,7 +108,7 @@ class ObjectInstanceController {
     }
     try{
       const objectInstance = await this.objectInstanceService.find(request.body.id);
-      if (objectInstance.member_id != session.id) {
+      if (objectInstance.member_id !== session.id) {
         throw new Error('You do not own this object!');
       }
 
@@ -148,7 +148,7 @@ class ObjectInstanceController {
   }
 
   public async buyObjectInstance(request: Request, response: Response): Promise<void>{
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if(!session) return;
     try {
       const objectId = Number.parseInt(request.body.id);
@@ -165,7 +165,7 @@ class ObjectInstanceController {
   }
 
   public async openObjectProperties(request: Request, response: Response): Promise<void>{
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if(!session) return;
     try {
       const id = Number.parseInt(request.params.id);
@@ -178,7 +178,7 @@ class ObjectInstanceController {
   }
 
   public async moveToBackpack(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     try {
       const objects = request.body.id;
@@ -199,7 +199,7 @@ class ObjectInstanceController {
   }
 
   public async moveToStorage(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     try {
       const objects = request.body.id;
@@ -224,7 +224,7 @@ class ObjectInstanceController {
   }
 
   public async pickUpObjectInstance(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
 
     try {
@@ -236,7 +236,7 @@ class ObjectInstanceController {
         adminStatus = await this.fleaMarketService.canAdmin(session.id);
       }
 
-      if (!adminStatus && objectInstance.member_id != session.id) {
+      if (!adminStatus && objectInstance.member_id !== session.id) {
         throw new Error('Not the owner of this object');
       }
       await this.objectInstanceService.updateObjectPlaceId(id, 0);
