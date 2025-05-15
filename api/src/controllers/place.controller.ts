@@ -31,7 +31,7 @@ class PlaceController {
     }
 
     try {
-      const session = this.memberService.decodeMemberToken(<string>apitoken);
+      const session = await this.memberService.decodeMemberToken(<string>apitoken);
       if (!session) {
         response.status(400).json({
           error: 'Invalid or missing token.',
@@ -59,7 +59,7 @@ class PlaceController {
     }
 
     try {
-      const session = this.memberService.decodeMemberToken(<string>apitoken);
+      const session = await this.memberService.decodeMemberToken(<string>apitoken);
       if (!session || !(await this.placeService.canManageAccess(slug, parseInt(id), session.id))) {
         response.status(400).json({
           error: 'Invalid or missing token.',
@@ -79,7 +79,7 @@ class PlaceController {
     const { apitoken } = request.headers;
     const { slug } = request.params;
     try {
-      const session = this.memberService.decodeMemberToken(<string>apitoken);
+      const session = await this.memberService.decodeMemberToken(<string>apitoken);
       if (!session || !(await this.placeService.canManageAccess(slug, parseInt(id), session.id))) {
         response.status(400).json({
           error: 'Invalid or missing token.',
@@ -101,7 +101,7 @@ class PlaceController {
 
   public async getSecurityInfo(request: Request, response: Response): Promise<any> {
     const { apitoken } = request.headers;
-    const session = this.memberService.decodeMemberToken(<string> apitoken);
+    const session = await this.memberService.decodeMemberToken(<string> apitoken);
     if (!session) {
       response.status(400).json({
         error: 'Invalid or missing token.',
@@ -125,7 +125,7 @@ class PlaceController {
   }
 
   public async getPlaceById(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if(!session) return;
     try {
       const place = await this.placeService.findById(parseInt(request.params.id));
@@ -149,7 +149,7 @@ class PlaceController {
   }
 
   public async addStorage(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if(!session) return;
     try {
       let storageName = request.body.name.toString();
@@ -167,7 +167,7 @@ class PlaceController {
   }
 
   public async deleteStorage(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if(!session) return;
     try {
       const unitID = request.body.id;
@@ -175,7 +175,7 @@ class PlaceController {
       if(place.member_id === session.id){
         await this.placeService.deleteStorage(unitID);
         response.status(200).json({status: 'success'});
-      }; 
+      }
     } catch (error) {
       console.error(error);
       response.status(400).json({ error: error.message });
@@ -185,7 +185,7 @@ class PlaceController {
   public async postAccessInfo(request: Request, response: Response): Promise<void> {
     const { apitoken } = request.headers;
     const { slug } = request.params;
-    const session = this.memberService.decodeMemberToken(<string> apitoken);
+    const session = await this.memberService.decodeMemberToken(<string> apitoken);
     if(!session) {
       response.status(400).json({
         error: 'Invalid or missing token.',
@@ -214,7 +214,7 @@ class PlaceController {
   }
 
   public async addVirtualPet(request: Request, response: Response): Promise<void>{
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if(!session) return;
     try {
       const placeId = Number.parseInt(request.params.place_id);
@@ -227,7 +227,7 @@ class PlaceController {
   }
 
   public async updateVirtualPet(request: Request, response: Response): Promise<void>{
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if(!session) return;
     const placeId = Number.parseInt(request.params.place_id);
     const name = request.body.name.toLocaleString();
@@ -260,7 +260,7 @@ class PlaceController {
               response.status(400).json({ error: error});
             }
           } else {
-            response.status(200).json({ error: 'You do not have access to update this.'})
+            response.status(200).json({ error: 'You do not have access to update this.'});
           }
         }
       }
@@ -268,7 +268,7 @@ class PlaceController {
   }
 
   public async getVirtualPet(request: Request, response: Response): Promise<void>{
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if(!session) return;
     try {
       const placeId = Number.parseInt(request.params.place_id);

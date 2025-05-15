@@ -4,6 +4,5 @@ import { Avatar } from './models';
 export interface SessionInfo {
   [key: string]: unknown,
   avatar: Avatar;
-  /** The user's database ID */
   id: number,
 }

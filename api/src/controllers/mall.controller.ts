@@ -19,10 +19,8 @@ class MallController {
   ) {}
 
   public async canAdmin(request: Request, response: Response): Promise<void> {
-    const { apitoken } = request.headers;
-
     try {
-      const session = this.memberService.decodeMemberToken(<string>apitoken);
+      const session = await this.memberService.decryptSession(request, response);
       if (!session || !(await this.mallService.canAdmin(session.id))) {
         response.status(400).json({
           error: 'Invalid or missing token or access denied.',
@@ -37,7 +35,7 @@ class MallController {
   }
 
   public async findStores(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
 
     try{
@@ -51,9 +49,8 @@ class MallController {
   }
 
   public async findSoldOutObjects(request: Request, response: Response): Promise<void> {
-    const { apitoken } = request.headers;
     try {
-      const session = this.memberService.decodeMemberToken(<string>apitoken);
+      const session = await this.memberService.decryptSession(request, response);
       if (!session || !(await this.mallService.canAdmin(session.id))) {
         response.status(400).json({
           error: 'Invalid or missing token or access denied.',
@@ -69,7 +66,7 @@ class MallController {
   }
 
   public async getObjectsCatalog(request: Request, response: Response): Promise<any> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     try {
       const results = await this.mallService.getObjectsCatalog(
@@ -84,7 +81,7 @@ class MallController {
   }
 
   public async searchMallObjects(request: Request, response: Response): Promise<any> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     const admin = await this.mallService.canAdmin(session.id);
     if (admin) {
@@ -106,7 +103,7 @@ class MallController {
   }
 
   public async searchAllObjects(request: Request, response: Response): Promise<any> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     const admin = await this.mallService.canAdmin(session.id);
     if (admin) {
@@ -139,7 +136,7 @@ class MallController {
     const { apitoken } = request.headers;
 
     try {
-      const session = this.memberService.decodeMemberToken(<string>apitoken);
+      const session = await this.memberService.decodeMemberToken(<string>apitoken);
       if (!session || !(await this.mallService.canAdmin(session.id))) {
         response.status(400).json({
           error: 'Invalid or missing token or access denied.',
@@ -182,7 +179,7 @@ class MallController {
     const { apitoken } = request.headers;
 
     try {
-      const session = this.memberService.decodeMemberToken(<string>apitoken);
+      const session = await this.memberService.decodeMemberToken(<string>apitoken);
       if (!session || !(await this.mallService.canAdmin(session.id))) {
         response.status(400).json({
           error: 'Invalid or missing token or access denied.',
@@ -208,7 +205,7 @@ class MallController {
     const { apitoken } = request.headers;
 
     try {
-      const session = this.memberService.decodeMemberToken(<string>apitoken);
+      const session = await this.memberService.decodeMemberToken(<string>apitoken);
       if (!session || !(await this.mallService.canAdmin(session.id))) {
         response.status(400).json({
           error: 'Invalid or missing token or access denied.',
@@ -229,7 +226,7 @@ class MallController {
     const { apitoken } = request.headers;
 
     try {
-      const session = this.memberService.decodeMemberToken(<string>apitoken);
+      const session = await this.memberService.decodeMemberToken(<string>apitoken);
       if (!session || !(await this.mallService.canAdmin(session.id))) {
         response.status(400).json({
           error: 'Invalid or missing token or access denied.',
@@ -250,7 +247,7 @@ class MallController {
     const { apitoken } = request.headers;
 
     try {
-      const session = this.memberService.decodeMemberToken(<string>apitoken);
+      const session = await this.memberService.decodeMemberToken(<string>apitoken);
       if (!session || !(await this.mallService.canAdmin(session.id))) {
         response.status(400).json({
           error: 'Invalid or missing token or access denied.',
@@ -271,7 +268,7 @@ class MallController {
     const { apitoken } = request.headers;
 
     try {
-      const session = this.memberService.decodeMemberToken(<string>apitoken);
+      const session = await this.memberService.decodeMemberToken(<string>apitoken);
       if (!session || !(await this.mallService.canAdmin(session.id))) {
         response.status(400).json({
           error: 'Invalid or missing token or access denied.',
@@ -292,7 +289,7 @@ class MallController {
     const { apitoken } = request.headers;
 
     try {
-      const session = this.memberService.decodeMemberToken(<string>apitoken);
+      const session = await this.memberService.decodeMemberToken(<string>apitoken);
       if (!session || !(await this.mallService.canAdmin(session.id))) {
         response.status(400).json({
           error: 'Invalid or missing token or access denied.',
@@ -313,7 +310,7 @@ class MallController {
     const { apitoken } = request.headers;
 
     try {
-      const session = this.memberService.decodeMemberToken(<string>apitoken);
+      const session = await this.memberService.decodeMemberToken(<string>apitoken);
       if (!session || !(await this.mallService.canAdmin(session.id))) {
         response.status(400).json({
           error: 'Invalid or missing token or access denied.',
@@ -334,7 +331,7 @@ class MallController {
     const { apitoken } = request.headers;
 
     try {
-      const session = this.memberService.decodeMemberToken(<string>apitoken);
+      const session = await this.memberService.decodeMemberToken(<string>apitoken);
       if (!session || !(await this.mallService.canAdmin(session.id))) {
         response.status(400).json({
           error: 'Invalid or missing token or access denied.',
@@ -369,7 +366,7 @@ class MallController {
     const { apitoken } = request.headers;
 
     try {
-      const session = this.memberService.decodeMemberToken(<string>apitoken);
+      const session = await this.memberService.decodeMemberToken(<string>apitoken);
       if (!session || !(await this.mallService.canAdmin(session.id))) {
         response.status(400).json({
           error: 'Invalid or missing token or access denied.',
@@ -419,7 +416,7 @@ class MallController {
   public async findByObjectId(request: Request, response: Response): Promise<void> {
     const { apitoken } = request.headers;
     try {
-      const session = this.memberService.decodeMemberToken(<string>apitoken);
+      const session = await this.memberService.decodeMemberToken(<string>apitoken);
       if (!session) {
         response.status(400).json({
           error: 'Invalid or missing token or access denied.',
@@ -437,7 +434,7 @@ class MallController {
   public async getObject(request: Request, response: Response): Promise<void> {
     const { apitoken } = request.headers;
     try {
-      const session = this.memberService.decodeMemberToken(<string>apitoken);
+      const session = await this.memberService.decodeMemberToken(<string>apitoken);
       if (!session) {
         response.status(400).json({
           error: 'Invalid or missing token or access denied.',
@@ -457,7 +454,7 @@ class MallController {
   public async findStore(request: Request, response: Response): Promise<void> {
     const { apitoken } = request.headers;
     try {
-      const session = this.memberService.decodeMemberToken(<string>apitoken);
+      const session = await this.memberService.decodeMemberToken(<string>apitoken);
       if (!session) {
         response.status(400).json({
           error: 'Invalid or missing token or access denied.',
@@ -474,7 +471,7 @@ class MallController {
 
   public async findByUsername(request: Request, response: Response): Promise<void> {
     const { apitoken } = request.headers;
-    const session = this.memberService.decodeMemberToken(<string>apitoken);
+    const session = await this.memberService.decodeMemberToken(<string>apitoken);
     if (!session) {
       response.status(400).json({
         error: 'Invalid or missing token or access denied.',
@@ -510,7 +507,7 @@ class MallController {
 
   public async findById(request: Request, response: Response): Promise<void> {
     const { apitoken } = request.headers;
-    const session = this.memberService.decodeMemberToken(<string>apitoken);
+    const session = await this.memberService.decodeMemberToken(<string>apitoken);
     if (!session) {
       response.status(400).json({
         error: 'Invalid or missing token or access denied.',
@@ -536,7 +533,7 @@ class MallController {
   }
 
   public async updateObjectPosition(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session || !(await this.mallService.canAdmin(session.id))) {
       response.status(400).json({
         error: 'Invalid or missing token or access denied.',
@@ -572,7 +569,7 @@ class MallController {
   }
 
   public async buyObject(request: Request, response: Response): Promise<void> {
-    const session = this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
 
     try {
