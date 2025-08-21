@@ -113,6 +113,7 @@ export default Vue.extend({
   name: 'VotingBoard',
   data() {
     return {
+      error: null,
       isLoading: true,
       isVoting: false,
       isModalOpen: false,
@@ -123,8 +124,7 @@ export default Vue.extend({
         description: '',
         options: ['', ''],
       },
-      // This should be retrieved from your app's auth system (e.g., Vuex store)
-      currentUserId: 'user-master-account-123', 
+      currentUserId: this.$store.data.user.id,
     };
   },
   computed: {
@@ -141,8 +141,7 @@ export default Vue.extend({
         // Sort polls by creation date, newest first
         this.polls = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       } catch (error) {
-        console.error('Failed to fetch polls:', error);
-        alert('Could not load polls.');
+        console.error('Failed to fetch polls:');
       } finally {
         this.isLoading = false;
       }
@@ -166,13 +165,12 @@ export default Vue.extend({
                 this.selectedPoll = response.data;
             }
         } catch (error) {
-            console.error(`Failed to fetch poll ${pollId}:`, error);
-            alert('Could not load the selected poll.');
+            console.error(`Failed to fetch poll ${pollId}:`);
         }
     },
     async createPoll() {
       if (this.newPoll.options.some(opt => !opt.trim())) {
-        alert('All options must be filled out.');
+        this.error = 'All options must be filled out.';
         return;
       }
       try {

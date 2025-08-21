@@ -37,6 +37,7 @@ import MessageBoard from "@/pages/MessageBoard.vue";
 import MessageToAll from "@/pages/MessageToAll.vue";
 import Inbox from "@/pages/Inbox.vue";
 import InboxToAll from "@/pages/InboxToAll.vue";
+import VotingBoard from "@/pages/Vote.vue";
 
 import AccessRights from "@/pages/AccessRights.vue";
 
@@ -379,6 +380,15 @@ export default [
     name: "information",
     meta: {
       title: "Information",
+      wrapper: false,
+    },
+  },
+  {
+    path: "/vote/:type/:id/:slug?",
+    component: VotingBoard,
+    name: "Vote",
+    meta: {
+      title: "Vote",
       wrapper: false,
     },
   },

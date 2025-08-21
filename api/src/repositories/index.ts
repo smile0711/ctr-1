@@ -20,3 +20,5 @@ export * from './wallet/wallet.repository';
 export * from './messageboard/messageboard.repository';
 export * from './inbox/inbox.repository';
 export * from './virtual_pet/virtual-pet.repository';
+export * from './poll/poll.repository';
+export * from './vote/vote.repository';

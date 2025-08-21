@@ -14,3 +14,4 @@ export * from './object.controller';
 export * from './place.controller';
 export * from './messageboard.controller';
 export * from './inbox.controller';
+export * from './vote.controller';
