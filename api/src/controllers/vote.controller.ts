@@ -20,9 +20,10 @@ class VoteController {
 
   public async getPolls(request: Request, response: Response): Promise<void> {
     const session = this.getSession(request, response);
+    const { placeId } = request.params;
     if (!session) return;
     try {
-      const polls = await this.voteService.getPolls();
+      const polls = await this.voteService.getPolls(Number.parseInt(placeId));
       response.status(200).json({ polls });
     } catch (error) {
       response.status(400).json({ error: 'Failed to fetch polls.' });
@@ -45,13 +46,13 @@ class VoteController {
     const session = this.getSession(request, response);
     if (!session) return;
     const { id } = session;
-    const { question, options } = request.body;
-    if (!question || !Array.isArray(options) || options.length < 2) {
+    const { memberId, placeId, question, choices } = request.body;
+    if (!question || !Array.isArray(choices) || choices.length < 2) {
       response.status(400).json({ error: 'Invalid poll data.' });
       return;
     }
     try {
-      const poll = await this.voteService.createPoll(id, question, options);
+      const poll = await this.voteService.createPoll(memberId, placeId, question, choices);
       response.status(201).json({ poll });
     } catch (error) {
       response.status(400).json({ error: 'Failed to create poll.' });

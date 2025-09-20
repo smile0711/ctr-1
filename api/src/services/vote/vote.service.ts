@@ -9,8 +9,8 @@ export class VoteService {
   ) {}
 
   /** Get all polls */
-  public async getPolls(): Promise<any> {
-    return await this.pollRepository.getPolls();
+  public async getPolls(placeId: number): Promise<any> {
+    return await this.pollRepository.getPollsByPlaceId(placeId);
   }
 
   /** Get a poll by its ID, including votes if needed */
@@ -25,10 +25,11 @@ export class VoteService {
   /** Create a new poll */
   public async createPoll(
     memberId: number,
+    placeId: number,
     question: string,
-    options: string[],
+    choices: any[],
   ): Promise<any> {
-    return await this.pollRepository.createPoll(memberId, question, options);
+    return await this.pollRepository.createPoll({memberId, placeId, question}, choices);
   }
 
   /** Cast a vote for a poll option */
@@ -45,7 +46,7 @@ export class VoteService {
     memberId: number,
     pollId: number,
   ): Promise<any> {
-    return await this.pollRepository.deletePoll(memberId, pollId);
+    return await this.pollRepository.deletePoll(pollId);
   }
 
   /** Optionally, get all votes for a poll */
