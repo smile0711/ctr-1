@@ -23,6 +23,7 @@ class AdminController {
   
   public async addBan(request: Request, response: Response): Promise<any> {
     const session = await this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     const admin = await this.memberService.canAdmin(session.id);
     if (admin) {
@@ -46,6 +47,7 @@ class AdminController {
   
   public async addDonor(request: Request, response: Response): Promise<void>{
     const session = await this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     const accessLevel = await this.memberService.getAccessLevel(session.id);
     if (accessLevel === 'admin') {
@@ -66,6 +68,7 @@ class AdminController {
   
   public async getBanHistory(request: Request, response: Response): Promise<any> {
     const session = await this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     const admin = await this.memberService.getAccessLevel(session.id);
     if (admin) {
@@ -83,6 +86,7 @@ class AdminController {
   }
   
   public async deleteBan(request: Request, response: Response): Promise<void> {
+    const session = await this.memberService.decryptSession(request, response);
     const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     const admin = await this.memberService.canAdmin(session.id);
@@ -104,6 +108,7 @@ class AdminController {
   }
 
   public async fireRole(request: Request, response: Response): Promise<void> {
+    const session = await this.memberService.decryptSession(request, response);
     const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     const { member_id, role_id } = request.body;
@@ -131,6 +136,7 @@ class AdminController {
   
   public async getDonor(request: Request, response: Response): Promise<string> {
     const session = await this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     const accessLevel = await this.memberService.getAccessLevel(session.id);
     if (accessLevel === 'admin') {
@@ -144,6 +150,7 @@ class AdminController {
   }
 
   public async getRoleList(request: Request, response: Response): Promise<any> {
+    const session = await this.memberService.decryptSession(request, response);
     const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     const admin = await this.memberService.getAccessLevel(session.id);
@@ -166,6 +173,7 @@ class AdminController {
 
   public async hireRole(request: Request, response: Response): Promise<any> {
     const session = await this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     const accessLevel = await this.memberService.getAccessLevel(session.id);
     if (accessLevel.includes('admin')) {
@@ -186,6 +194,7 @@ class AdminController {
   }
   
   public async searchUsers(request: Request, response: Response): Promise<any> {
+    const session = await this.memberService.decryptSession(request, response);
     const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     const admin = await this.memberService.getAccessLevel(session.id);
@@ -208,6 +217,7 @@ class AdminController {
 
   public async getTransactions(request: Request, response: Response): Promise<any> {
     const session = await this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     const admin = await this.memberService.getAccessLevel(session.id);
     const returnResults = [];
@@ -221,6 +231,7 @@ class AdminController {
           Number.parseInt(request.query.limit.toString()),
           Number.parseInt(request.query.offset.toString()),
         );
+        findUsername = results.transactions;
         findUsername = results.transactions;
         for(const res of findUsername) {
           let sender = [{username: 'System'}];
@@ -253,6 +264,7 @@ class AdminController {
 
   public async getTransactionsByWalletId(request: Request, response: Response): Promise<any> {
     const session = await this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     const admin = await this.memberService.getAccessLevel(session.id);
     const returnResults = [];
@@ -268,6 +280,7 @@ class AdminController {
           Number.parseInt(request.query.limit.toString()),
           Number.parseInt(request.query.offset.toString()),
         );
+        findUsername = results.transactions;
         findUsername = results.transactions;
         for(const res of findUsername) {
           let sender = [{username: 'System'}];
@@ -300,6 +313,7 @@ class AdminController {
 
   public async getObjectInstances(request: Request, response: Response): Promise<any> {
     const session = await this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     const admin = await this.memberService.getAccessLevel(session.id);
     if (admin.includes('security')) {
@@ -323,6 +337,7 @@ class AdminController {
 
   public async getOwnedObjects(request: Request, response: Response): Promise<any> {
     const session = await this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     const admin = await this.memberService.getAccessLevel(session.id);
     if (admin.includes('admin')) {
@@ -344,6 +359,7 @@ class AdminController {
   }
   
   public async searchUserChat(request: Request, response: Response): Promise<any> {
+    const session = await this.memberService.decryptSession(request, response);
     const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     const admin = await this.memberService.getAccessLevel(session.id);
@@ -367,6 +383,7 @@ class AdminController {
 
   public async getCommunityData(request: Request, response: Response): Promise<any> {
     const session = await this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     const admin = await this.memberService.getAccessLevel(session.id);
     if (admin.includes('security')) {
@@ -383,6 +400,7 @@ class AdminController {
   }
 
   public async avatars(request: Request, response: Response): Promise<any> {
+    const session = await this.memberService.decryptSession(request, response);
     const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     const admin = await this.memberService.canAdmin(session.id);
@@ -405,6 +423,7 @@ class AdminController {
 
   public async avatarApprove(request: Request, response: Response): Promise<any> {
     const session = await this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     const admin = await this.memberService.canAdmin(session.id);
     if (!admin) {
@@ -422,6 +441,7 @@ class AdminController {
     }
   }
   public async avatarReject(request: Request, response: Response): Promise<any> {
+    const session = await this.memberService.decryptSession(request, response);
     const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     const admin = await this.memberService.canAdmin(session.id);
@@ -441,6 +461,7 @@ class AdminController {
   }
 
   public async places(request: Request, response: Response): Promise<any> {
+    const session = await this.memberService.decryptSession(request, response);
     const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     const admin = await this.memberService.getAccessLevel(session.id);
@@ -463,6 +484,7 @@ class AdminController {
   }
 
   public async searchAllPlaces(request: Request, response: Response): Promise<any> {
+    const session = await this.memberService.decryptSession(request, response);
     const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     const admin = await this.memberService.getAccessLevel(session.id);
@@ -493,6 +515,7 @@ class AdminController {
   }
 
   public async findUserPlaces(request: Request, response: Response): Promise<any> {
+    const session = await this.memberService.decryptSession(request, response);
     const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     const admin = await this.memberService.getAccessLevel(session.id);
@@ -575,6 +598,7 @@ class AdminController {
 
   public async objectssUpdate(request: Request, response: Response): Promise<any> {
     const session = await this.memberService.decryptSession(request, response);
+    const session = await this.memberService.decryptSession(request, response);
     if (!session) return;
     const admin = await this.memberService.canAdmin(session.id);
     if (admin) {
@@ -608,6 +632,7 @@ class AdminController {
             limit,
             quantity,
             status,
+            status,
           );
         } else {
           throw new Error ('Some details are blank. Please complete the form');
@@ -630,6 +655,13 @@ const placeService = Container.get(PlaceService);
 const roleAssignmentService = Container.get(RoleAssignmentService);
 const objectInstanceService = Container.get(ObjectInstanceService);
 export const adminController = new AdminController(
+  adminService,
+  memberService,
+  avatarService,
+  placeService,
+  roleAssignmentService,
+  objectInstanceService,
+);
   adminService,
   memberService,
   avatarService,

@@ -218,6 +218,7 @@ export class MemberService {
     };
   }
 
+
   public async getMemberChat(memberId: number): Promise<number> {
     const member = await this.find({ id: memberId });
     return member.chatdefault;
@@ -414,7 +415,41 @@ export class MemberService {
       },
       process.env.JWT_SECRET,
       { expiresIn: '1h' },
+      { expiresIn: '1h' },
     );
+  }
+
+  /**
+   * Generates a refresh token for the member with the given memberId.
+   * @param memberId id of member to generate a refresh token for
+   * @returns promise resolving in encoded refresh token, or rejecting on error
+   */
+  public async generateRefreshToken(memberId: number): Promise<string> {
+    return jwt.sign(
+      {
+        id: memberId,
+        type: 'refresh',
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' },
+    );
+  }
+
+  /**
+   * Validates a refresh token and returns a new access token if valid.
+   * @param refreshToken refresh token to validate
+   * @returns promise resolving in new access token, or rejecting on error
+   */
+  public async refreshAccessToken(refreshToken: string): Promise<string> {
+    try {
+      const decoded = <SessionInfo>jwt.verify(refreshToken, process.env.JWT_SECRET);
+      if (decoded.type !== 'refresh') {
+        throw new Error('Invalid token type');
+      }
+      return this.getMemberToken(decoded.id);
+    } catch (error) {
+      throw new Error('Invalid refresh token');
+    }
   }
 
   /**
@@ -458,6 +493,7 @@ export class MemberService {
   private encryptPassword(password: string): Promise<string> {
     return bcrypt.hash(password, MemberService.SALT_ROUNDS);
   }
+
 
   /**
    * Updates a members default chat choice firstname and lastname
@@ -506,6 +542,7 @@ export class MemberService {
     const userId = await this.memberRepository.findIdByUsername(username);
     return userId;
   }
+
 
   public async check3d(username: string): Promise<void> {
     const user = await this.memberRepository.check3d(username);
@@ -558,7 +595,25 @@ export class MemberService {
 
     // Fallback to header token (for backward compatibility)
     //const { apitoken } = request.headers;
+  public async decryptSession(request: Request, response: Response): Promise<SessionInfo> {
+    // Check for token in cookies first (new method)
+    let token = request.cookies.accessToken;
+    const refreshToken = request.cookies.refreshToken;
 
+    // Fallback to header token (for backward compatibility)
+    //const { apitoken } = request.headers;
+
+    //const token = cookieToken || apitoken;
+
+    if (!token || typeof token !== 'string') {
+      token = await this.refreshAccessToken(refreshToken);
+      if (!token || typeof token !== 'string') {
+        console.log('Invalid or missing Refresh Token');
+        response.status(400).json({
+          error: 'Invalid or missing token.',
+        });
+        return;
+      }
     //const token = cookieToken || apitoken;
 
     if (!token || typeof token !== 'string') {
@@ -574,6 +629,7 @@ export class MemberService {
 
     try {
       const session = this.decodeMemberToken(token);
+      const session = this.decodeMemberToken(token);
       if (!session) {
         console.log('Invalid or missing Token');
         response.status(400).json({
@@ -583,6 +639,29 @@ export class MemberService {
       }
       return session;
     } catch (error) {
+      // If token is expired and we have a refresh token, try to refresh
+      if (error.name === 'TokenExpiredError' && request.cookies.refreshToken) {
+        try {
+          // Try to refresh the token
+          console.log('Token expired, attempting to refresh');
+          const newToken = this.refreshAccessToken(request.cookies.refreshToken);
+          console.log('Refresh token success: ', newToken);
+          // Set the new token as a cookie
+          response.cookie('accessToken', newToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 60 * 60 * 1000, // 60 minutes
+            sameSite: 'strict',
+          });
+
+          // Decode and return the new token
+          return this.decodeMemberToken(await newToken);
+        } catch (refreshError) {
+          // If refresh fails, proceed with normal error handling
+          console.log('Token refresh failed');
+        }
+      }
+
       // If token is expired and we have a refresh token, try to refresh
       if (error.name === 'TokenExpiredError' && request.cookies.refreshToken) {
         try {
