@@ -56,6 +56,33 @@ export interface AppStore {
     };
 }
 
+// Helper functions for expiring token in localStorage
+function setTokenWithExpiry(token: string, expiryMs: number = 3600000) {
+    const now = Date.now();
+    const item = {
+        value: token,
+        expiry: now + expiryMs,
+    };
+    localStorage.setItem("token", JSON.stringify(item));
+}
+
+function getTokenWithExpiry(): string | undefined {
+    const itemStr = localStorage.getItem("token");
+    if (!itemStr) return undefined;
+    try {
+        const item = JSON.parse(itemStr);
+        if (typeof item !== "object" || !item.value || !item.expiry) return undefined;
+        if (Date.now() > item.expiry) {
+            localStorage.removeItem("token");
+            return undefined;
+        }
+        return item.value;
+    } catch {
+        localStorage.removeItem("token");
+        return undefined;
+    }
+}
+
 const appStore = Vue.observable<AppStore>({
     data: {
         loading: false,
@@ -63,7 +90,7 @@ const appStore = Vue.observable<AppStore>({
         x3dReady: false,
         view3d: false,
         user: {
-            token: localStorage.getItem("token"),
+            token: getTokenWithExpiry(),
         },
         place: {},
     },
@@ -75,7 +102,7 @@ const appStore = Vue.observable<AppStore>({
         },
         setToken(token: string): void {
             appStore.data.user.token = token;
-            localStorage.setItem("token", token);
+            setTokenWithExpiry(token);
         },
         setView3d(value: boolean): void {
             appStore.data.view3d = value;

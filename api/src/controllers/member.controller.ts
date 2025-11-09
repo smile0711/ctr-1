@@ -4,6 +4,7 @@ import { Request, Response } from 'express';
 import { Container } from 'typedi';
 import validator from 'validator';
 import * as badwords from 'badwords-list';
+import * as cookieParser from 'cookie-parser';
 
 import { sendPasswordResetEmail, sendPasswordResetUnknownEmail } from '../libs';
 import { MemberService, HomeService, PlaceService } from '../services';
@@ -207,13 +208,23 @@ class MemberController {
     const { username, password } = request.body;
     try {
       this.validateLoginInput(username, password);
-      const token = await this.memberService.login(username, password);
-      const tokenData = await this.memberService.decodeMemberToken(token);
+      // Get both access and refresh tokens
+      const { accessToken, refreshToken } = await this.memberService.login(username, password);
+      const tokenData = await this.memberService.decodeMemberToken(accessToken);
       const homeInfo = await this.homeService.getHome(tokenData.id);
+
+      // Set refresh cookie (7 days, httpOnly)
+      response.cookie('refresh', refreshToken, {
+        httpOnly: true,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        path: '/',
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+      });
 
       response.status(200).json({
         message: 'Login Successful',
-        token,
+        token: accessToken,
         username,
         hasHome: !!homeInfo,
       });
@@ -287,10 +298,15 @@ class MemberController {
   public async session(request: Request, response: Response): Promise<void> {
     try {
       const { apitoken } = request.headers;
-      if (_.isUndefined(apitoken)) {
-        throw new Error('Missing token.');
+      const refreshtoken = cookieParser.cookie(request)['refresh'];
+      if (!refreshtoken || _.isUndefined(refreshtoken)) {
+        throw new Error('Refresh token is missing.');
+      }
+      if (!apitoken || _.isUndefined(apitoken)) {
+        throw new Error('API token is missing.');
       }
       const session = this.memberService.decodeMemberToken(<string>apitoken);
+      const refreshSession = this.memberService.decodeMemberToken(refreshtoken);
       if (session) {
         // refresh client token with latest from database
         const token = await this.memberService.getMemberToken(session.id);
@@ -337,10 +353,21 @@ class MemberController {
         throw new Error('This language can not be used on CTR!');
       }
 
-      const token = await this.memberService.createMemberAndLogin(email, username, password);
+      // Get both access and refresh tokens
+      const { accessToken, refreshToken } = await this.memberService.createMemberAndLogin(email, username, password);
+
+      // Set refresh cookie (7 days, httpOnly)
+      response.cookie('refresh', refreshToken, {
+        httpOnly: true,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        path: '/',
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+      });
+
       response.status(200).json({
         message: 'Signup Completed',
-        token,
+        token: accessToken,
         username,
       });
     } catch (error) {

@@ -127,12 +127,11 @@ export class MemberService {
    * @param password  raw member password
    * @returns promise resolving in the session token for the newly created member
    */
-
   public async createMemberAndLogin(
     email: string,
     username: string,
     password: string,
-  ): Promise<string> {
+  ): Promise<{ accessToken: string, refreshToken: string }> {
     const hashedPassword = await this.encryptPassword(password);
     const memberId = await this.memberRepository.create({
       email,
@@ -140,7 +139,9 @@ export class MemberService {
       password: hashedPassword,
     });
     await this.maybeGiveDailyCredits(memberId);
-    return this.getMemberToken(memberId);
+    const accessToken = await this.getMemberToken(memberId);
+    const refreshToken = this.generateRefreshToken({ id: memberId, username });
+    return { accessToken, refreshToken };
   }
 
   /**
@@ -330,14 +331,33 @@ export class MemberService {
    * @param password password of member to be logged in
    * @returns
    */
-  public async login(username: string, password: string): Promise<string> {
+  public async login(username: string, password: string): Promise<{ accessToken: string, refreshToken: string }> {
     const member = await this.memberRepository.find({ username });
     if (!member) throw new Error('Account not found.');
     const validPassword = await bcrypt.compare(password, member.password);
     if (!validPassword) throw new Error('Incorrect login details.');
     if (member.status === 0) throw new Error('banned');
     this.maybeGiveDailyCredits(member.id);
-    return this.encodeMemberToken(member);
+    const accessToken = await this.encodeMemberToken(member);
+    const refreshToken = this.generateRefreshToken({ id: member.id, username: member.username });
+    return { accessToken, refreshToken };
+  }
+
+  /**
+   * Generates a refresh token for the user.
+   * @param payload object containing user id and username
+   * @returns refresh token string
+   */
+  private generateRefreshToken(payload: { id: number, username: string }): string {
+    return jwt.sign(
+      {
+        id: payload.id,
+        username: payload.username,
+        type: 'refresh',
+      },
+      process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
   }
 
   /**
