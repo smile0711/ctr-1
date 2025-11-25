@@ -238,6 +238,10 @@ export default Vue.extend({
           slug: "beach",
         },
         {
+          title: "Le Cafe",
+          slug: "cafe",
+        },
+        {
           title: "Water Park",
           slug: "waterpark",
         },
