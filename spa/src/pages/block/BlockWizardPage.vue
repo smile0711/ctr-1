@@ -85,13 +85,13 @@
 </template>
 
 <script lang="ts">
-	import Vue from "vue";
+	import { defineComponent } from "vue";
 	import { colonyDataHelper } from "@/helpers";
 
-	export default Vue.extend({
+	export default defineComponent({
 		name: "BlockWizardPage",
 		props: ["block", "hood", "colony"],
-		data: () => {
+		data() {
 			return {
 				loaded: false,
 				locations: [],
@@ -152,6 +152,6 @@
 				this.getData();
 			}
 		},
-		async beforeDestroy() {}
+		async beforeUnmount() {}
 	});
 </script>

@@ -77,6 +77,7 @@
       </div>
       <div class="flex-1 px-8">
         <table border="0">
+        <tbody>
           <tr align="center">
             <td align="center">Nickname</td>
             <td align="center">
@@ -111,6 +112,8 @@
               </button>
             </td>
           </tr>
+        
+          </tbody>
         </table>
       </div>
       <div style="width: 120px" class="text-right">
@@ -141,11 +144,13 @@
     <p>
       <strong>Immigration or Login Problems?</strong> Check the
       <a href="" target="_self">Quick Help</a>!<br /><br />
-      <div class="flex justify-center">
-        <h3 class="p-2"><router-link to="/privacypolicy"> Privacy Policy </router-link></h3>
-        <h3 class="p-2"><router-link to="/rulesandregulations"> Rules and Regulations </router-link></h3>
-        <h3 class="p-2"><router-link to="/constitution"> Constitution </router-link></h3>
-      </div>
+    </p>
+    <div class="flex justify-center">
+      <h3 class="p-2"><router-link to="/privacypolicy"> Privacy Policy </router-link></h3>
+      <h3 class="p-2"><router-link to="/rulesandregulations"> Rules and Regulations </router-link></h3>
+      <h3 class="p-2"><router-link to="/constitution"> Constitution </router-link></h3>
+    </div>
+    <p>
       <br />
       <font size="+1" color="#FFFF00">
         <strong>Please note:</strong> to enter the site your browser must accept
@@ -160,11 +165,11 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from "vue";
 
-export default Vue.extend({
+export default defineComponent({
   name: "LoginPage",
-  data: () => {
+  data() {
     return {
       username: "",
       password: "",

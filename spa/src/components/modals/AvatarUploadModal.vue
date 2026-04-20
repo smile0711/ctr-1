@@ -23,6 +23,7 @@
           <p>Upload your own avatar file to be used in Cybertown Revival. You can also choose to allow other members to use it
             too. All avatars uploaded will require approval by the Admins before being made available.</p>
           <table>
+            <tbody>
             <tr>
               <td>Avatar VRML File:</td>
               <td><input type="file"
@@ -80,6 +81,7 @@
                 </select>
               </td>
             </tr>
+            </tbody>
           </table>
           <button type="button"
                   class="btn"
@@ -92,16 +94,16 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 import Modal from './Modal.vue';
 import ModalMixin from './mixins/ModalMixin';
 import AvatarModal from "./AvatarModal.vue";
 import ModalService from "./services/ModalService.vue";
 
-export default Vue.extend({
+export default defineComponent({
   name: "AvatarUploadModal",
   components: { Modal },
-  data: () => {
+  data() {
     return {
       showError: false,
       showSuccess: false,

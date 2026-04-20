@@ -31,17 +31,17 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 import MemberModal from './MemberModal.vue';
 import Modal from './Modal.vue';
 import ModalMixin from './mixins/ModalMixin';
 import ModalService from "./services/ModalService.vue";
 
-export default Vue.extend({
+export default defineComponent({
   name: "InstantMessageModal",
   components: {Modal},
   props: ["user"],
-  data: () => {
+  data() {
     return {
       userData: null,
       view: "respond",

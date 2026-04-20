@@ -4,9 +4,9 @@
       <component 
         v-if="modal"
         :is="modal.component"
+        v-bind="modal.props"
         v-bind:close="modal.close"
         v-bind:dismiss="modal.dismiss"
-        v-bind="modal.props"
         :class="{ 'd-block': modal.component }"
       />
     </transition>
@@ -14,24 +14,24 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent, markRaw } from "vue";
 
 import ModalService from './services/ModalService.vue';
 import Modal from './Modal.vue';
 
-export default Vue.extend({
+export default defineComponent({
   components: { Modal },
   data() {
     return {
-      modal: {},
+      modal: {} as any,
     }
   },
   created() {
-    ModalService.$on('open', ({ component, props, resolve, reject }) => {
+    ModalService.$on('open', ({ component, props, resolve, reject }: any) => {
       this.modal = {
-        component,
+        component: markRaw(component),
         props,
-        close: value => {
+        close: (value: any) => {
           this.modal = {};
           resolve(value);
         },
@@ -58,7 +58,7 @@ export default Vue.extend({
 .modal-leave-active {
   transition: all 0.25s ease-out;
 }
-.modal-enter,
+.modal-enter-from,
 .modal-leave-to {
   transform: translateY(25px);
   opacity: 0;

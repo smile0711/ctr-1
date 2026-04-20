@@ -54,6 +54,7 @@
         </p>
         <br />
         <table border="0" v-show="!success">
+        <tbody>
           <tr align="center">
             <td align="center">New Password</td>
             <td align="center">
@@ -87,6 +88,8 @@
               </button>
             </td>
           </tr>
+        
+          </tbody>
         </table>
         <p v-if="success">
           Your account password has been updated.
@@ -101,11 +104,11 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from "vue";
 
-export default Vue.extend({
+export default defineComponent({
   name: "ForgotPasswordPage",
-  data: () => {
+  data() {
     return {
       newPassword: "",
       newPassword2: "",

@@ -95,7 +95,9 @@ import ClubUpdate from "@/pages/club/ClubUpdate.vue";
 
 import MayorElection from '@/pages/MayorElection.vue';
 
-export default [
+import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
+
+const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
     component: HomePage,
@@ -150,7 +152,6 @@ export default [
       default: WorldPage,
       tools: WorldBrowserTools,
     },
-    name: "",
     meta: { wrapper: true },
     children: [
       {
@@ -160,19 +161,19 @@ export default [
         meta: { wrapper: true },
       },
       {
-        path: "",
+        path: "accessrights",
         component: AccessRights,
         name: "worldAccessRights",
         meta: { wrapper: true },
       },
       {
-        path: "",
+        path: "msgtoall",
         component: MessageToAll,
         name: "colonyMessageToAll",
         meta: { wrapper: true },
       },
       {
-        path: "",
+        path: "inboxtoall",
         component: InboxToAll,
         name: "colonyInboxToAll",
         meta: { wrapper: true },
@@ -241,7 +242,6 @@ export default [
       default: NeighborhoodPage,
       tools: NeighborhoodTools,
     },
-    name: "",
     meta: { wrapper: true },
     children: [
       {
@@ -251,19 +251,19 @@ export default [
         meta: { wrapper: true },
       },
       {
-        path: "",
+        path: "accessrights",
         component: AccessRights,
         name: "neighborhoodAccessRights",
         meta: { wrapper: true },
       },
       {
-        path: "",
+        path: "msgtoall",
         component: MessageToAll,
         name: "neighborhoodMessageToAll",
         meta: { wrapper: true },
       },
       {
-        path: "",
+        path: "inboxtoall",
         component: InboxToAll,
         name: "neighborhoodInboxToAll",
         meta: { wrapper: true },
@@ -276,7 +276,6 @@ export default [
       default: BlockPage,
       tools: BlockTools,
     },
-    name: "",
     meta: { wrapper: true },
     children: [
       {
@@ -298,19 +297,19 @@ export default [
         meta: { wrapper: true },
       },
       {
-        path: "",
+        path: "accessrights",
         component: AccessRights,
         name: "blockaccessrights",
         meta: { wrapper: true },
       },
       {
-        path: "",
+        path: "msgtoall",
         component: MessageToAll,
         name: "blockMessageToAll",
         meta: { wrapper: true },
       },
       {
-        path: "",
+        path: "inboxtoall",
         component: InboxToAll,
         name: "blockInboxToAll",
         meta: { wrapper: true },
@@ -461,7 +460,6 @@ export default [
       {
         path: "/admin/member/user/:id",
         component: UserMain,
-        default: UserSubMenu,
         name: "UserMain",
         meta: {
           title: "Member Details - Admin Panel",
@@ -470,9 +468,7 @@ export default [
           {
             path: "/admin/member/user/:id",
             component: UserSubMenu,
-            default: InfoView,
-            name: "",
-            meta: {
+                    meta: {
               title: "Member Details - Admin Panel",
             },
             children: [
@@ -778,23 +774,22 @@ export default [
       default: WorldPage,
       tools: ClubTools,
     },
-    name: "",
     meta: { wrapper: true },
     children: [
       {
         path: "",
         component: WorldBrowserPage,
-        name: "world-browser",
+        name: "club-page",
         meta: { wrapper: true },
       },
       {
-        path: "",
+        path: "accessrights",
         component: AccessRights,
         name: "clubAccessRights",
         meta: { wrapper: true },
       },
       {
-        path: "",
+        path: "update",
         component: ClubUpdate,
         name: "club-update",
         meta: { wrapper: true },
@@ -850,3 +845,10 @@ export default [
   },
 
 ];
+
+const router = createRouter({
+  history: createWebHashHistory(),
+  routes,
+});
+
+export default router;

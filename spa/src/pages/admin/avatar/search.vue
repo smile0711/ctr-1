@@ -26,6 +26,7 @@
       Total Count: {{ totalCount }}
     </div>
     <table class="table-auto border-collapse">
+    <tbody>
       <tr>
         <th class="p-4">ID</th>
         <th class="p-4">Name</th>
@@ -51,6 +52,8 @@
           <button class="btn" @click="reject(avatar.id)">Reject</button>
         </td>
       </tr>
+    
+      </tbody>
     </table>
     <div class="grid grid-cols-2 w-4/6 justify-items-center">
       <div class="p-1 text-right w-full">
@@ -72,11 +75,11 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 
-export default Vue.extend({
+export default defineComponent({
   name: "AvatarSearch",
-  data: () => {
+  data() {
     return {
       totalCount: 0,
       avatars: [],

@@ -2,6 +2,7 @@
   <div class="flex-1">
     <div align="center" class="links mt-5">
       <table width="740" border="0" cellspacing="0" cellpadding="0">
+      <tbody>
         <tr>
           <td colspan="2">
             <img
@@ -70,7 +71,7 @@
               "
               ><img
                 src="/assets/img/homepage/overview_but128.gif"
-                style="width: 134; height: 21px"
+                style="width: 134px; height: 21px"
                 name="overview"
                 border="0"
                 alt="Overview"
@@ -131,8 +132,11 @@
             /></a>
           </td>
         </tr>
+      
+        </tbody>
       </table>
       <table width="740" border="0" cellspacing="0" cellpadding="0" height="7">
+      <tbody>
         <tr valign="top">
           <td height="14">
             <img
@@ -147,7 +151,7 @@
               @mouseover="
                 MM_swapImage('box_blank', '', 'images/box_plaza_on.gif', 1)
               "
-              onMouseDown="MM_showHideLayers('help','','hide','plazas','','show','clubs','','hide')"
+              @mousedown="MM_showHideLayers('help','','hide','plazas','','show','clubs','','hide')"
               ><img
                 src="/assets/img/homepage/visit_plazat128.gif"
                 style="width: 135px; height: 33px"
@@ -159,7 +163,7 @@
               @mouseover="
                 MM_swapImage('box_blank', '', 'images/box_club_on.gif', 1)
               "
-              onMouseDown="MM_showHideLayers('help','','hide','plazas','','hide','clubs','','show')"
+              @mousedown="MM_showHideLayers('help','','hide','plazas','','hide','clubs','','show')"
               ><img
                 src="/assets/img/homepage/visit_clubs128.gif"
                 border="0"
@@ -170,7 +174,7 @@
               @mouseover="
                 MM_swapImage('box_blank', '', 'images/box_help_on.gif', 1)
               "
-              onMouseDown="MM_showHideLayers('help','','show','plazas','','hide','clubs','','hide')"
+              @mousedown="MM_showHideLayers('help','','show','plazas','','hide','clubs','','hide')"
               ><img
                 src="/assets/img/homepage/visit_help128.gif"
                 style="width: 100px; height: 33px"
@@ -179,8 +183,11 @@
             /></a>
           </td>
         </tr>
+      
+        </tbody>
       </table>
       <table width="740" border="0" cellspacing="0" cellpadding="0" height="7">
+      <tbody>
         <tr valign="top">
           <td width="519" rowspan="2" height="83" valign="top">
             <div align="right">
@@ -221,6 +228,7 @@
               cellpadding="0"
               align="center"
             >
+              <tbody>
               <tr>
                 <td style="line-height: normal">
                   <router-link to="/login"
@@ -241,11 +249,15 @@
                   </font>
                 </td>
               </tr>
+            
+              </tbody>
             </table>
           </td>
         </tr>
+        </tbody>
       </table>
       <table width="740" border="0" cellspacing="0" cellpadding="0">
+      <tbody>
         <tr>
           <td colspan="3">
             <div align="center">
@@ -298,6 +310,8 @@
             </div>
           </td>
         </tr>
+      
+        </tbody>
       </table>
       <div
         id="help"
@@ -374,16 +388,25 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from "vue";
 
-export default Vue.extend({
+export default defineComponent({
   name: "Homepage",
-  data: () => {
+  data() {
     return {};
   },
   methods: {
     MM_swapImage() {},
     MM_swapImgRestore() {},
+    MM_showHideLayers(...args: string[]) {
+      // args come in triples: elementId, ignored, action ('show'|'hide')
+      for (let i = 0; i < args.length; i += 3) {
+        const el = document.getElementById(args[i]);
+        if (el) {
+          el.style.visibility = args[i + 2] === 'show' ? 'visible' : 'hidden';
+        }
+      }
+    },
   },
   mounted() {
     if (this.$store.data.isUser) {

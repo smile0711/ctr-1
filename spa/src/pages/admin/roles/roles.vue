@@ -7,6 +7,7 @@
     </div>
     <div class="flex w-full justify-center p-5">
       <table>
+      <tbody>
         <tr>
           <th>ID</th>
           <th class="text-left" style="min-width: 200px;">Role Title</th>
@@ -19,6 +20,7 @@
           <td>{{ role.name }}</td>
           <td class="py-2">
             <table>
+              <tbody>
               <tr>
                 <td class="italic">Weekly Pay: </td>
                 <td class="text-center font-bold px-2">{{ role.income_cc }} cc</td>
@@ -31,6 +33,8 @@
                 <td class="text-green italic">Minimum XP: </td>
                 <td class="text-green text-center font-bold px-2">{{ role.required_xp }} xp</td>
               </tr>
+            
+              </tbody>
             </table>
           </td>
           <td class="text-center font-bold text-green" v-if="role.active === 1">{{ status[role.active] }}</td>
@@ -38,16 +42,17 @@
           <td class="text-center font-bold text-black" style="background-color: lime;" v-if="role.total[0].count >= 1">{{ role.total[0].count }}</td>
           <td class="text-center" v-else>0</td>
         </tr>
+        </tbody>
       </table>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-export default Vue.extend({
+import { defineComponent } from "vue";
+export default defineComponent({
   name: "CityRoles",
-  data: () => {
+  data() {
     return {
       accessLevel: null,
       cityRoles: [],

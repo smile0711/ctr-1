@@ -1,4 +1,4 @@
-import Vue from "vue";
+import { reactive } from "vue";
 
 /** Represents the shape of user data object on the global app store */
 export interface User {
@@ -58,7 +58,7 @@ export interface AppStore {
     };
 }
 
-const appStore = Vue.observable<AppStore>({
+const appStore = reactive<AppStore>({
     data: {
         bid: 0,
         loading: false,

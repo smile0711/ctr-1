@@ -26,6 +26,7 @@
               nickname:</font>
           </strong>
           <table border="0">
+          <tbody>
             <tr>
               <td><b>Owner</b>:</td>
               <td v-if="!$route.fullPath.includes('/club/')">
@@ -35,13 +36,18 @@
                 {{ owner }}
               </td>
             </tr>
+          
+            </tbody>
           </table>
           <table>
+          <tbody>
             <tr>
               <td class="text-yellow-200" v-if="$route.fullPath.includes('/club/')">
                 <i>Owner cannot be changed in clubs.</i>
               </td>
             </tr>
+          
+            </tbody>
           </table>
           <br />
           <p>
@@ -108,10 +114,10 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-export default Vue.extend({
+import { defineComponent } from "vue";
+export default defineComponent({
   name: "AccessRightsPage",
-  data: () => {
+  data() {
     return {
       data: [],
       loaded: false,

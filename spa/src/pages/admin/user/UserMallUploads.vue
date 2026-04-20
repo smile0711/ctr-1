@@ -27,6 +27,7 @@
     <div class="text-2xl w-full justify-center text-center p-5">Uploaded Objects</div>
     <div v-if="objects.length >= 1">
       <table>
+      <tbody>
         <tr>
           <th></th>
           <th>Mall Object Details</th>
@@ -41,6 +42,7 @@
           </td>
           <td class="p-4">
             <table>
+              <tbody>
               <tr>
                 <td class="italic">ID: </td>
                 <td class="font-bold px-2">{{ object.id }}</td>
@@ -79,10 +81,13 @@
                 <td class="italic">Status: </td>
                 <td class="font-bold px-2">{{ object.status }}</td>
               </tr>
+            
+              </tbody>
             </table>
           </td>
           <td class="p-4"></td>
       </tr>
+        </tbody>
       </table>
     </div>
     <div v-else>No mall objects found.</div>
@@ -108,10 +113,10 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-export default Vue.extend({
+import { defineComponent } from "vue";
+export default defineComponent({
   name: "UserMallUploads",
-  data: () => {
+  data() {
     return {
       totalCount: 0,
       objects: [],

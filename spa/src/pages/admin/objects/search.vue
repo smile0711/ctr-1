@@ -39,6 +39,7 @@
       <span class="p-2 font-bold" style="color:lime;" v-if="(pageNum + 5) <= pages.length">. . .</span>
     </div>
     <table class="table-auto border-collapse">
+    <tbody>
       <tr>
         <th class="p-4">ID</th>
         <th class="p-4">Object Name</th>
@@ -93,6 +94,8 @@
           <td class="p-5 font-bold" style="color:lime;">{{ objectState[object.status] }}</td>
           <td class="p-5"><button class="btn-ui p-2" @click="openUpdater(object.id)">Update<br />Object</button></td>
       </tr>
+    
+      </tbody>
     </table>
     <div class="flex w-full justify-center">
       <div class="flex justify-center">
@@ -112,10 +115,10 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-export default Vue.extend({
+import { defineComponent } from "vue";
+export default defineComponent({
   name: "ObjectSearch",
-  data: () => {
+  data() {
     return {
       totalCount: 0,
       objects: [],

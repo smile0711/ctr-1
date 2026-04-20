@@ -62,19 +62,19 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 
 import Modal from './Modal.vue';
 import ModalMixin from './mixins/ModalMixin';
 import ModalService from "./services/ModalService.vue";
 
-export default Vue.extend({
+export default defineComponent({
   name: "SecurityAlertModal",
   components: {Modal},
   props: [
     "data"
   ],
-  data: () => {
+  data() {
     return {
       placeOwner: null,
     };

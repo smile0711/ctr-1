@@ -3,6 +3,7 @@
     <div align="center">
       <font face="Arial, Helvetica, sans-serif" size="-1">
         <table cellpadding="8">
+        <tbody>
           <tr>
             <td>
               <div align="center">
@@ -42,6 +43,7 @@
                 >
                   <input type="hidden" name="TKT" value="" />
                   <table border="0">
+                    <tbody>
                     <tr>
                       <td colspan="3">
                         <font color="#00FF00" size="+1"
@@ -131,6 +133,8 @@
                       </td>
                       <td valign="top">&nbsp;</td>
                     </tr>
+                  
+                    </tbody>
                   </table>
                   <p align="center">
                     <button
@@ -146,6 +150,7 @@
               </div>
             </td>
           </tr>
+          </tbody>
         </table>
         <br clear="all" />
       </font>
@@ -154,10 +159,10 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from "vue";
 import appStore from "@/appStore";
 
-export default Vue.extend({
+export default defineComponent({
   name: "SignupPage",
   data() {
     return {

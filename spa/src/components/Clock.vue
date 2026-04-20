@@ -5,9 +5,9 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 
-export default Vue.extend({
+export default defineComponent({
   name: "ClockPage",
   data() {
     return {
@@ -16,7 +16,7 @@ export default Vue.extend({
       loaded: false,
     };
   },
-  beforeDestroy() {
+  beforeUnmount() {
     // prevent memory leak
     clearInterval(this.interval);
   },

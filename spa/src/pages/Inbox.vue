@@ -14,8 +14,8 @@
           </div>
         </div>
 
-        <p><h2><center>{{ this.placeinfo[0].name }}'s Inbox</center></h2></p>
-        <p><div class="content" v-html="this.placeinfo[0].inbox_intro"/></p>
+        <div><h2><center>{{ this.placeinfo[0].name }}'s Inbox</center></h2></div>
+        <div><div class="content" v-html="this.placeinfo[0].inbox_intro"/></div>
         <hr/>
 
         <div v-if="this.boardadmin">
@@ -121,10 +121,9 @@
 
         <div class="w-full flex flex-row">
           <div class="flex-grow border-2 border-black"/>
-          <p>
-            <div class="flex-grow border-black"
-                 style="width:99%; margin-top: 10px"
-                 v-html="this.dmessage"/>
+          <div class="flex-grow border-black w-full mt-2" 
+               style="width:99%; margin-top: 10px"
+               v-html="this.dmessage"/>
         </div>
       </div>
     </div>
@@ -196,11 +195,11 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 
-export default Vue.extend({
+export default defineComponent({
   name: "Inbox",
-  data: () => {
+  data() {
     return {
       active: "view",
       boardadmin: false,

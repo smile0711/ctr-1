@@ -27,6 +27,7 @@
     <div class="text-2xl w-full justify-center text-center p-5">Owned Objects</div>
     <div v-if="objects.length >= 1">
       <table>
+      <tbody>
         <tr>
           <th></th>
           <th>Object Details</th>
@@ -43,6 +44,7 @@
           </td>
           <td class="p-4">
             <table>
+              <tbody>
               <tr>
                 <td class="italic">ID: </td>
                 <td class="font-bold px-2 overflow-x-hidden whitespace-nowrap">{{ object.id }}</td>
@@ -59,10 +61,13 @@
                 <td class="italic">Buyer: </td>
                 <td class="font-bold px-2">{{ object.object_buyer }}</td>
               </tr>
+            
+              </tbody>
             </table>
           </td>
           <td class="p-4">
             <table>
+            <tbody>
               <tr>
                 <td class="italic">Mall Object ID: </td>
                 <td class="font-bold px-2">{{ object.object_id }}</td>
@@ -71,20 +76,26 @@
                 <td class="italic">Original Name: </td>
                 <td class="font-bold px-2">{{ object.name }}</td>
               </tr>
+            
+              </tbody>
             </table>
           </td>
           <td class="p-4">
             <div class="p-4 font-bold w-full justify-center text-center capitalize" v-if="['home', 'club', 'storage', 'backpack'].includes(object.place_type)">In {{ object.place_type }}</div>
             <div class="p-4 font-bold w-full justify-center text-center" v-else>Public Place</div>
             <table v-if="object.place_name !== 'backpack'">
+            <tbody>
               <tr>
                 <td class="italic">Place Name: </td>
                 <td class="p-4 font-bold px-2 text-green capitalize">{{ object.place_name }}</td>
               </tr>
+            
+              </tbody>
             </table>
           </td>
           <td class="p-4"></td>
       </tr>
+        </tbody>
       </table>
     </div>
     <div v-else>This user does not own any objects.</div>
@@ -110,10 +121,10 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-export default Vue.extend({
+import { defineComponent } from "vue";
+export default defineComponent({
   name: "OwnedObjects",
-  data: () => {
+  data() {
     return {
       totalCount: 0,
       objects: [],

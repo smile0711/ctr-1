@@ -4,6 +4,7 @@
       <div class="text-2xl font-bold text-green">Activity Data</div>
       <div class="p-2">
         <table class="w-full">
+        <tbody>
           <tr>
             <td>Daily Users: </td>
             <td>{{ Number(dailyUsers).toLocaleString() }}</td>
@@ -16,6 +17,8 @@
             <td>Monthly Users: </td>
             <td>{{ Number(monthlyUsers).toLocaleString() }}</td>
           </tr>
+        
+          </tbody>
         </table>
       </div>
     </div>
@@ -23,6 +26,7 @@
       <div class="text-2xl font-bold text-green">Member Data</div>
       <div class="p-2">
         <table class="w-full">
+        <tbody>
           <tr>
             <td>Total Members: </td>
             <td>{{ Number(totalUsers).toLocaleString() }}</td>
@@ -39,6 +43,8 @@
             <td>New Members Past Year: </td>
             <td>{{ Number(newMembersLastYear).toLocaleString() }}</td>
           </tr>
+        
+          </tbody>
         </table>
       </div>
     </div>
@@ -46,9 +52,11 @@
       <div class="text-2xl font-bold text-green">Newest Members</div>
       <div class="p-2">
         <table class="w-full">
+        <tbody>
           <tr>
             <td v-if="wealthiestUsers.length !== 0">
               <table class="w-full">
+                <tbody>
                 <tr v-for="user in newestUsers" :key="user.id">
                   <td>
                     <div class="grid grid-cols-2">
@@ -56,10 +64,13 @@
                     </div>
                   </td>
                 </tr>
+              
+                </tbody>
               </table>
             </td>
             <td class="py-5 px-10" v-else>No users found</td>
           </tr>
+          </tbody>
         </table>
       </div>
     </div>
@@ -67,9 +78,11 @@
       <div class="text-2xl font-bold text-green">Recently Hired</div>
       <div class="p-2">
         <table class="w-full">
+        <tbody>
           <tr>
             <td v-if="latestHires.length !== 0">
               <table class="w-full">
+                <tbody>
                 <tr v-for="user in latestHires" :key="user.id">
                   <td>
                     <div class="flex">
@@ -77,10 +90,13 @@
                     </div>
                   </td>
                 </tr>
+              
+                </tbody>
               </table>
             </td>
             <td class="py-5 px-10" v-else>No users found</td>
           </tr>
+          </tbody>
         </table>
       </div>
     </div>
@@ -88,6 +104,7 @@
       <div class="text-2xl font-bold text-green">Money Data</div>
       <div class="p-2">
         <table class="w-full">
+        <tbody>
           <tr>
             <td>Average Balance: </td>
             <td>{{ Math.round(Number(averageMoney)).toLocaleString() }} cc</td>
@@ -100,6 +117,8 @@
             <td>Community Balance: </td>
             <td>{{ Number(totalMoney).toLocaleString() }} cc</td>
           </tr>
+        
+          </tbody>
         </table>
       </div>
     </div>
@@ -107,9 +126,11 @@
       <div class="text-2xl font-bold text-green">Wealthiest Members</div>
       <div class="p-2">
         <table class="w-full">
+        <tbody>
           <tr>
             <td v-if="wealthiestUsers.length !== 0">
               <table class="w-full">
+                <tbody>
                 <tr v-for="user in wealthiestUsers" :key="user.id">
                   <td>
                     <div class="grid grid-cols-2">
@@ -118,10 +139,13 @@
                     </div>
                   </td>
                 </tr>
+              
+                </tbody>
               </table>
             </td>
             <td class="py-5 px-10" v-else>No users found</td>
           </tr>
+          </tbody>
         </table>
       </div>
     </div>
@@ -129,6 +153,7 @@
       <div class="text-2xl font-bold text-green">Security Data</div>
       <div class="p-2">
         <table class="w-full">
+        <tbody>
           <tr>
             <td>Banned Last 7 Days: </td>
             <td>{{ Number(recentlyBanned.length).toLocaleString() }}</td>
@@ -149,6 +174,8 @@
             <td>Total Banned Members: </td>
             <td>{{ Number(totalBannedUsers).toLocaleString() }}</td>
           </tr>
+        
+          </tbody>
         </table>
       </div>
     </div>
@@ -156,6 +183,7 @@
       <div class="text-2xl font-bold text-green">Place Data</div>
       <div class="p-2">
         <table class="w-full">
+        <tbody>
           <tr>
             <td>Total Colonies: </td>
             <td>{{ Number(totalColonies).toLocaleString() }}</td>
@@ -188,6 +216,8 @@
             <td>Total Private: </td>
             <td>{{ Number(totalPrivate).toLocaleString() }}</td>
           </tr>
+        
+          </tbody>
         </table>
       </div>
     </div>
@@ -195,6 +225,7 @@
       <div class="text-2xl font-bold text-green">Object Data</div>
       <div class="p-2">
         <table class="w-full">
+        <tbody>
           <tr>
             <td>Average Objects Owned: </td>
             <td>{{ Math.round(Number(averageObjects)).toLocaleString() }}</td>
@@ -215,6 +246,8 @@
             <td>Highest Price: </td>
             <td>{{ Number(highestPriceForSale).toLocaleString() }} cc</td>
           </tr>
+        
+          </tbody>
         </table>
       </div>
     </div>
@@ -222,6 +255,7 @@
       <div class="text-2xl font-bold text-green">Mall Object Data</div>
       <div class="p-2">
         <table class="w-full">
+        <tbody>
           <tr>
             <td>Average Mall Object Price: </td>
             <td>{{ Math.round(Number(averageMallPrice)).toLocaleString() }} cc</td>
@@ -242,6 +276,8 @@
             <td>Total Uploads: </td>
             <td>{{ Number(totalUploads).toLocaleString() }}</td>
           </tr>
+        
+          </tbody>
         </table>
       </div>
     </div>
@@ -253,6 +289,7 @@
       <div class="text-2xl font-bold text-green">Top 5 Active Places</div>
       <div class="p-2">
         <table class="w-full">
+        <tbody>
           <tr>
             <td v-if="activePlaces.length !== 0">
               <ul>
@@ -263,6 +300,8 @@
             </td>
             <td class="py-5 px-10" v-else>No recent activity found</td>
           </tr>
+        
+          </tbody>
         </table>
       </div>
     </div>
@@ -270,6 +309,7 @@
       <div class="text-2xl font-bold text-green">Top 5 Active Messageboards</div>
       <div class="p-2">
         <table class="w-full">
+        <tbody>
           <tr>
             <td v-if="activeMB.length !== 0">
               <ul>
@@ -280,6 +320,8 @@
             </td>
             <td class="py-5 px-10" v-else>No recent activity found</td>
           </tr>
+        
+          </tbody>
         </table>
       </div>
     </div>
@@ -287,9 +329,11 @@
       <div class="text-2xl font-bold text-green">Bans Ending Soon</div>
       <div class="p-2">
         <table class="w-full">
+        <tbody>
           <tr>
             <td v-if="bansEndingSoon.length !== 0">
               <table>
+                <tbody>
                 <tr v-for="unbanned in bansEndingSoon" :key="unbanned.id">
                   <td>
                     <div class="grid grid-cols-2 w-96 pb-2">
@@ -303,10 +347,13 @@
                     </div>
                   </td>
                 </tr>
+              
+                </tbody>
               </table>
             </td>
             <td class="py-5 px-10" v-else>There are no bans ending soon</td>
           </tr>
+          </tbody>
         </table>
       </div>
     </div>
@@ -314,9 +361,11 @@
       <div class="text-2xl font-bold text-green">Recent Jail Ban Issued</div>
       <div class="p-2">
         <table class="w-full">
+        <tbody>
           <tr>
             <td v-if="recentlyJailed.length !== 0">
               <table>
+                <tbody>
                 <tr v-for="jailed in recentlyJailed" :key="jailed.id">
                   <td>
                     <div class="grid grid-cols-2 w-96 pb-2">
@@ -328,10 +377,13 @@
                     </div>
                   </td>
                 </tr>
+              
+                </tbody>
               </table>
             </td>
             <td class="py-5 px-10" v-else>No recently jailed users found</td>
           </tr>
+          </tbody>
         </table>
       </div>
     </div>
@@ -339,9 +391,11 @@
       <div class="text-2xl font-bold text-green">Recent Full Ban Issued</div>
       <div class="p-2">
         <table class="w-full">
+        <tbody>
           <tr>
             <td v-if="recentlyBanned.length !== 0">
               <table>
+                <tbody>
                 <tr v-for="banned in recentlyBanned" :key="banned.id">
                   <td>
                     <div class="grid grid-cols-2 w-96 pb-2">
@@ -353,10 +407,13 @@
                     </div>
                   </td>
                 </tr>
+              
+                </tbody>
               </table>
             </td>
             <td class="py-5 px-10" v-else>No recently banned users found</td>
           </tr>
+          </tbody>
         </table>
       </div>
     </div>
@@ -364,9 +421,11 @@
       <div class="text-2xl font-bold text-green">Transactions in the Last Hour</div>
       <div class="p-2">
         <table class="w-full">
+        <tbody>
           <tr>
             <td v-if="latestTransactions.length !== 0">
               <table>
+                <tbody>
                 <tr v-for="transaction in latestTransactions" :key="transaction.id">
                   <td>
                     <div class="flex ">
@@ -381,10 +440,13 @@
                     </div>
                   </td>
                 </tr>
+              
+                </tbody>
               </table>
             </td>
             <td class="py-5 px-10" v-else>No recent transactions found</td>
           </tr>
+          </tbody>
         </table>
       </div>
     </div>
@@ -395,10 +457,10 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-export default Vue.extend({
+import { defineComponent } from "vue";
+export default defineComponent({
   name: "EconomicPanel",
-  data: () => {
+  data() {
     return {
       averageMoney: 0,
       averageObjects: 0,

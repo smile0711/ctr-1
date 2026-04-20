@@ -37,6 +37,7 @@
   </div>
     <div class="flex w-full justify-center p-5">
       <table>
+      <tbody>
         <tr>
           <th>ID</th>
           <th></th>
@@ -49,6 +50,7 @@
           <td class="p-5 font-bold">{{ transaction.id }}</td>
           <td class="p-5">
             <table>
+              <tbody>
               <tr>
                 <td class="italic pb-2" v-if="transaction.sender[0].username !== 'System'">Buyer: </td>
                 <td class="italic pb-2" v-else>Sender: </td>
@@ -59,6 +61,8 @@
                 <td class="italic" v-else>Receiver: </td>
                 <td class="text-center text-green font-bold px-2">{{ transaction.receiver[0].username }}</td>
               </tr>
+            
+              </tbody>
             </table>
           </td>
           <td class="p-5 text-center">{{ transaction.amount }} cc</td>
@@ -72,6 +76,7 @@
           </td>
           <td class="p-5 text-center">{{ reasonDisplay[transaction.reason_display] }}</td>
         </tr>
+        </tbody>
       </table>
     </div>
     <div class="grid grid-cols-2 w-full justify-items-center">
@@ -96,10 +101,10 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-export default Vue.extend({
+import { defineComponent } from "vue";
+export default defineComponent({
   name: "Transactions",
-  data: () => {
+  data() {
     return {
       accessLevel: null,
       totalCount: 0,

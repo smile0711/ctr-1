@@ -34,6 +34,7 @@
     </div>
     <div class="flex justify-center text-center w-full">
       <table class="w-2/3 border-double border-4 border-gray-400">
+          <tbody>
             <tr>
               <th class="border-double border-4 border-gray-400 text-chat">No</th>
               <th class="border-double border-4 border-gray-400 text-chat">Username</th>
@@ -69,17 +70,19 @@
                 </span>
               </td>
             </tr>
-          </table>
+          
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
 
 <script>
-import Vue from "vue";
+import { defineComponent } from "vue";
 
-export default Vue.extend({
+export default defineComponent({
   name: "ClubMemberList",
-  data: () => {
+  data() {
     return {
       membersCount: 0,
       limit: 10,

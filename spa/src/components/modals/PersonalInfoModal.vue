@@ -10,6 +10,7 @@
         <div style="color: darkred" v-if="error">{{ error }}</div>
         <h3 class="text-center text-2xl">Personal Info</h3>
         <table border=0 width=100% class="text-2xl">
+        <tbody>
           <tr>
               <td><b>Name</b></td>
               <td>{{ info.username}}</td>
@@ -28,7 +29,7 @@
           </tr>
             <tr>
               <td><b>Immigration</b></td>
-              <td>{{ info.immigrationDate | dateFormatFilter }}</td>
+              <td>{{ dateFormatFilter(info.immigrationDate) }}</td>
             </tr>
             <tr>
               <td><b>Experience</b></td>
@@ -56,6 +57,8 @@
 	      <b>3D</b> <input type="radio" v-model="info.chatdefault" value="1">
 	      </td>
             </tr>
+        
+          </tbody>
         </table>
 	<center>Note: You must refresh/reload CTR after changing default chat value for it to take effect</center>
         <div class="text-center flex-1">
@@ -70,15 +73,16 @@
   </Modal>
 </template>
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
   
 import Modal from "./Modal.vue";
 import ModalMixin from "./mixins/ModalMixin";
   
 import InfoModal from "./InfoModal.vue";
 import ModalService from "./services/ModalService.vue";
+import { dateFormatFilter } from "@/helpers/fiters";
 
-export default Vue.extend({
+export default defineComponent({
   name: "PersonalInfoModal",
   components: {Modal},
   async created() {
@@ -89,7 +93,7 @@ export default Vue.extend({
       this.roles = response.data.roles;
     });
   },
-  data: () => {
+  data() {
     return {
       error: undefined,
       info: {
@@ -109,6 +113,7 @@ export default Vue.extend({
     };
   },
   methods: {
+    dateFormatFilter,
     backToInfoModal(): void {
       ModalService.open(InfoModal);
     },

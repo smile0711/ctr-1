@@ -4,6 +4,7 @@
     <div>Original Name: {{ oldName }}</div>
     <div class="grid justify-items-center">
       <table class="my-5">
+      <tbody>
         <tr>
           <td class="text-right p-2">Place ID: </td>
           <td class="p-2">{{ place.id }}</td>
@@ -50,6 +51,8 @@
             </select>
           </td>
         </tr>
+      
+        </tbody>
       </table>
       <div class="grid justify-center">
         <span class="w-screen text-center text-red-500" v-if="error">{{ error }}</span>
@@ -61,10 +64,10 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-export default Vue.extend({
+import { defineComponent } from "vue";
+export default defineComponent({
   name: "AdminPlaceUpdate",
-  data: () => {
+  data() {
     return {
       accessLevel: "none",
       oldName: "",

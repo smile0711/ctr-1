@@ -43,18 +43,18 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 
 import { colonyDataHelper } from '@/helpers';
 
-export default Vue.extend({
+export default defineComponent({
   name: "BlockMapPage",
   props: [
     "block",
     "hood",
     "colony",
   ],
-  data: () => {
+  data() {
     return {
       loaded: false,
       locations: [],

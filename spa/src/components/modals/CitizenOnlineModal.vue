@@ -92,7 +92,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 import ConfirmAlertModal from './ConfirmAlertModal.vue';
 import Modal from './Modal.vue';
 import ConfigureModal from './ConfigureModal.vue';
@@ -101,11 +101,11 @@ import MemberModal from './MemberModal.vue';
 import ModalMixin from './mixins/ModalMixin';
 import ModalService from "./services/ModalService.vue";
 
-export default Vue.extend({
+export default defineComponent({
   name: "CitizenOnlineModal",
   components: {Modal},
   props: ["action", "details"],
-  data: () => {
+  data() {
     return {
       users: [],
       security: [],

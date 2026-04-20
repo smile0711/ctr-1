@@ -36,6 +36,7 @@
       </span>
 
       <table class="mx-auto my-3">
+        <tbody>
         <tr>
           <td class="text-left">Object Name:</td>
           <td class="text-left">
@@ -92,6 +93,7 @@
                    accept=".jpeg,.jpg" />
           </td>
         </tr>
+        </tbody>
       </table>
     </div>
     <p>
@@ -134,7 +136,8 @@
 price for each instance of the object. The more instances you upload,
 the lower the percentage, as shown in the table below:
 <div align=center>
-<table border=1 cellpadding=0 width=40%><tr>
+<table border=1 cellpadding=0 width=40%>
+      <tbody><tr>
 <td><FONT face="Arial, Helvetica, sans-serif" size=-1>&nbsp;Quantity   </td><td><FONT face="Arial, Helvetica, sans-serif" size=-1>&nbsp;Percentage</td> 
 </tr><tr>
 <td><FONT face="Arial, Helvetica, sans-serif" size=-1>&nbsp;&lt;50        </td><td><FONT face="Arial, Helvetica, sans-serif" size=-1>&nbsp;25%      </td>    
@@ -144,10 +147,13 @@ the lower the percentage, as shown in the table below:
 <td><FONT face="Arial, Helvetica, sans-serif" size=-1>&nbsp;&lt;200       </td><td><FONT face="Arial, Helvetica, sans-serif" size=-1>&nbsp;15%      </td>
 </tr><tr>
 <td><FONT face="Arial, Helvetica, sans-serif" size=-1>&nbsp;200 or more</td><td><FONT face="Arial, Helvetica, sans-serif" size=-1>&nbsp;10%      </td> 
-</tr></table>
+</tr>
+  </tbody>
+</table>
 </div> -->
       For each instance of the object that gets sold, 80% of the selling
       price will be credited to you.
+    </p>
 
     <p>
       If one of your uploaded objects sells well and you want to make more
@@ -164,11 +170,12 @@ If you sell all 10 chairs, you earn 250 CCs and double your investment.
 70% of the selling price will be credited to you for each chair sold. 
 </p> -->
 
-    <p>
+    <div>
       <a name="explain"></a>Below is a brief explanation of the fields in the Object Upload form.
       <br />
     <table style="width:500px;"
            class="mx-auto">
+      <tbody>
       <tr>
         <td>Name:</td>
         <td>The name of the object you're uploading, e.g. Chair.</td>
@@ -200,12 +207,13 @@ If you sell all 10 chairs, you earn 250 CCs and double your investment.
           This image will be displayed to 2D users.
         </td>
       </tr>
+      </tbody>
     </table>
     <br />
     The texture file is optional; all other fields must be filled in. After
     you have filled in the fields, click on <b>Upload</b>. If you change your mind,
     click on <b>Close</b>.
-    </p>
+    </div>
     <p>Notes:</p>
     <ul>
       <li>Internet Explorer 3.x doesn't support file uploads.</li>
@@ -219,11 +227,11 @@ If you sell all 10 chairs, you earn 250 CCs and double your investment.
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from 'vue';
 
-export default Vue.extend({
+export default defineComponent({
   name: "MallUploadPage",
-  data: () => {
+  data() {
     return {
       showError: false,
       showForm: true,

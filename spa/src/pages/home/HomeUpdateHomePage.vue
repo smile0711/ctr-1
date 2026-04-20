@@ -112,12 +112,12 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 import {colonyDataHelper, homeDataHelper} from "@/helpers";
 
-export default Vue.extend({
+export default defineComponent({
   name: "HomeUpdateHomePage",
-  data: () => {
+  data() {
     return {
       loaded: false,
       showError: false,

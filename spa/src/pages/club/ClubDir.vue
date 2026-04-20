@@ -35,6 +35,7 @@
     </div>
     <div class="flex justify-center text-center w-full">
       <table class="w-2/3 border-double border-4 border-gray-400">
+          <tbody>
             <tr>
               <th class="border-double border-4 border-gray-400 font-chat">No</th>
               <th class="border-double border-4 border-gray-400 font-chat">Club Name<br>Owner</th>
@@ -58,17 +59,19 @@
                 {{ club.private ? "Private" : "Public" }}
               </td>
             </tr>
-          </table>
+          
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
 
 <script>
-import Vue from "vue";
+import { defineComponent } from "vue";
 
-export default Vue.extend({
+export default defineComponent({
   name: "ClubDirPage",
-  data: () => {
+  data() {
     return {
       clubs: [],
       clubsCount: 0,

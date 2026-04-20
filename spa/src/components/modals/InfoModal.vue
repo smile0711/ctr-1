@@ -12,6 +12,7 @@
 
           <div align="center">
             <table border="0">
+              <tbody>
               <tr>
                 <td width="200" align="center">
                   <a href="#" @click.prevent="openPersonalInfoModal">
@@ -27,8 +28,10 @@
                   </a>
                 </td>
               </tr>
+              </tbody>
             </table>
             <table>
+              <tbody>
               <tr>
                 <td width=200 align=center>
                   <a href="#" @click.prevent="openAccountModal">
@@ -41,6 +44,7 @@
                   </a>
                 </td>
               </tr>
+              </tbody>
             </table>
             <br>
             To access and set up your Instant Message Center,
@@ -54,7 +58,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 
 import Modal from './Modal.vue';
 import ModalMixin from './mixins/ModalMixin';
@@ -63,7 +67,7 @@ import AccountModal from "./AccountModal.vue";
 import ModalService from "./services/ModalService.vue";
 import PersonalInfoModalVue from './PersonalInfoModal.vue';
 
-export default Vue.extend({
+export default defineComponent({
   name: "InfoModal",
   components: {Modal},
   methods: {

@@ -26,6 +26,7 @@
       <span class="p-2 font-bold" style="color:lime;" v-if="(pageNum + 5) <= pages.length">. . .</span>
     </div>
     <table class="table-auto border-collapse">
+    <tbody>
       <tr>
         <th class="p-4">ID</th>
         <th class="p-4">User Object Details</th>
@@ -38,6 +39,7 @@
           <td class="p-4">{{ object.id }}</td>
           <td class="p-4">
             <table>
+              <tbody>
               <tr>
                 <td class="italic">Name: </td>
                 <td class="font-bold px-2 overflow-x-hidden whitespace-nowrap" style="max-width: 300px; white">{{ object.object_name }}</td>
@@ -50,10 +52,13 @@
                 <td class="italic">Buyer: </td>
                 <td class="font-bold px-2">{{ object.object_buyer }}</td>
               </tr>
+            
+              </tbody>
             </table>
           </td>
           <td class="p-4">
             <table>
+            <tbody>
               <tr>
                 <td class="italic">Mall Object ID: </td>
                 <td class="font-bold px-2">{{ object.object_id }}</td>
@@ -62,10 +67,13 @@
                 <td class="italic">Original Name: </td>
                 <td class="font-bold px-2">{{ object.name }}</td>
               </tr>
+            
+              </tbody>
             </table>
           </td>
           <td class="p-4">
             <table>
+            <tbody>
               <tr>
                 <td class="italic">Owner: </td>
                 <td class="font-bold px-2 text-green">{{ object.username }}</td>
@@ -82,11 +90,14 @@
                 <td class="italic">Place Name: </td>
                 <td class="p-4 font-bold px-2 text-green capitalize">{{ object.place_name }}</td>
               </tr>
+            
+              </tbody>
             </table>
           </td>
 
           <td class="p-4"></td>
       </tr>
+      </tbody>
     </table>
     <div class="flex w-full justify-center">
       <div class="flex justify-center">
@@ -106,10 +117,10 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-export default Vue.extend({
+import { defineComponent } from "vue";
+export default defineComponent({
   name: "UserObjectSearch",
-  data: () => {
+  data() {
     return {
       totalCount: 0,
       objects: [],

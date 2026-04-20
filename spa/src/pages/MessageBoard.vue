@@ -1,6 +1,6 @@
 <template>
   <div id="MessageBoard" class="w-full flex-1 h-full">
-    <div v-if="this.active === 'view'" style="height:100%">
+    <div v-if="active === 'view'" style="height:100%">
       <div class="overflow-y-auto" style="height:70%">
         <div v-if="success" class="text-chat"><center>{{ success }}</center></div>
         <div v-if="error" class="text-red-500"><center>{{ error }}</center></div>
@@ -9,17 +9,17 @@
             <button class="btn-ui" @click="switchPost()">POST</button>
           </div>
           <div class="flex border-4 border-black justify-center">
-            <button class="btn-ui" @click="switchManage()" v-show="this.boardadmin">MANAGE</button>
+            <button class="btn-ui" @click="switchManage()" v-show="boardadmin">MANAGE</button>
           </div>
         </div>
-        <p><h2><center>{{ this.placeinfo[0].name }}'s Message Board</center></h2></p>
-        <p><div class="content" v-html="this.placeinfo[0].messageboard_intro"/></p>
+        <h2><center>{{ placeinfo[0].name }}'s Message Board</center></h2>
+        <div class="content" v-html="placeinfo[0].messageboard_intro"/>
         <hr/>
-        <div v-if="messageboardmessages <= 0">
+        <div v-if="messageboardmessages.length <= 0">
           No messages to display
         </div>
         <div>
-          <p v-for="(id, index) in messageboardmessages" :key="id.id">
+          <p v-for="id in messageboardmessages" :key="id.id">
             <span v-if="id.reply === 1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
             <a href="#" @click.prevent="getMessage(
               id.id,
@@ -61,7 +61,7 @@
                     minute: 'numeric',
                     timeZone: 'America/Detroit',
                   })}}</p>
-            <p>Subject: <span v-if="this.dreply === 1">RE: </span>{{ dsubject }}</p>
+            <p>Subject: <span v-if="dreply === 1">RE: </span>{{ dsubject }}</p>
             <p>From: {{ dfrom }}</p>
           </div>
           <div class="flex-grow" style="width:19%">
@@ -71,20 +71,19 @@
             <div class="flex-grow border-2 border-black">
               <button
                class="btn-ui"
-               v-show="this.boardadmin"
+               v-show="boardadmin"
                @click="deleteMessageboardMessage()">DELETE</button>
             </div>
           </div>
         </div>
         <div class="w-full flex flex-row">
           <div class="flex-grow border-2 border-black"/>
-          <p>
-            <div class="flex-grow border-black"
-                style="width:99%; margin-top: 10px" v-html="this.dmessage[0].message"/>
+          <div class="flex-grow border-black w-full mt-2" 
+               style="width:99%; margin-top: 10px" v-html="dmessage[0]?.message"/>
         </div>
       </div>
     </div>
-    <div v-if="this.active === 'post'">
+    <div v-if="active === 'post'">
       <center>
         <div class="text-red-300 justify-center" v-if="error">
           {{ error }}
@@ -104,7 +103,7 @@
         <button class="btn" @click="switchView()">CANCEL</button>&nbsp;&nbsp;&nbsp;<button type="submit" class="btn" @click="postMessageboardMessage()">POST</button>
       </center>
     </div>
-    <div v-if="this.active === 'reply'">
+    <div v-if="active === 'reply'">
       <center>
         <label for="subject">Subject:</label>&nbsp;&nbsp;
         RE: {{ dsubject }}<br><br>
@@ -113,12 +112,10 @@
         <button class="btn" @click="switchView()">CANCEL</button>&nbsp;&nbsp;&nbsp;<button type="submit" class="btn" @click="postMessageboardReply()">REPLY</button>
       </center>
     </div>
-    <div v-if="this.active === 'manage'">
+    <div v-if="active === 'manage'">
       <center>
-        <h2>{{ this.placeinfo[0].name }} Manager</h2>
-        <textarea id="intro" class="text-black w-2/3 h-96" v-model="intro">
-          {{ this.placeinfo[0].messageboard_intro }}
-        </textarea><br><br>
+        <h2>{{ placeinfo[0].name }} Manager</h2>
+        <textarea id="intro" class="text-black w-2/3 h-96" v-model="intro"></textarea><br><br>
         <button class="btn" @click="switchView()">CANCEL</button>&nbsp;&nbsp;&nbsp;
         <button type="submit" class="btn" @click="changeMessageboardIntro">UPDATE</button>
       </center>
@@ -126,16 +123,15 @@
   </div>
 </template>
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from 'vue';
 
 import {
   debugMsg,
 } from "@/helpers";
-import {response} from "express";
 
-export default Vue.extend({
+export default defineComponent({
   name: "MessageBoard",
-  data: () => {
+  data() {
     return {
       active: "view",
       boardadmin: false,
@@ -144,9 +140,9 @@ export default Vue.extend({
       dfrom: "",
       did: 0,
       display: false,
-      dmessage: "",
+      dmessage: [] as any[],
       dparentid: "",
-      dreply: "",
+      dreply: 0,
       dsubject: "",
       error: "",
       intro: "",
@@ -168,7 +164,7 @@ export default Vue.extend({
         this.success = "Message Board Information Updated";
         this.error = "";
         this.display = false;
-      } catch (error) {
+      } catch (error: any) {
         this.error = error.response.data.error;
         this.success = "";
       } finally {
@@ -189,7 +185,7 @@ export default Vue.extend({
         this.success = "Message Deleted";
         this.error = "";
         this.display = false;
-      } catch (error) {
+      } catch (error: any) {
         this.error = error.response.data.error;
         this.success = "";
       } finally {
@@ -259,7 +255,7 @@ export default Vue.extend({
         this.subject = "";
         this.body = "";
         this.getMessageboardMessages();
-      } catch (error) {
+      } catch (error: any) {
         this.error = error.response.data.error;
         //this.body = error.response.data.error.body;
         this.success = "";
@@ -279,7 +275,7 @@ export default Vue.extend({
         this.active = "view";
         this.subject = "";
         this.body = "";
-      } catch (error) {
+      } catch (error: any) {
         this.error = "Unauthorized HTML Tag Used. The tag(s) have been removed, hit post again to send";
         this.body = "testing something";
         this.success = "";

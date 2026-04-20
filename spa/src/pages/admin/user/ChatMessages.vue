@@ -100,11 +100,11 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 
-export default Vue.extend({
+export default defineComponent({
   name: "UserChat",
-  data: () => {
+  data() {
     return {
       chat: [],
       totalCount: 0,

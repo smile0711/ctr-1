@@ -421,9 +421,9 @@
 
 <script lang="ts">
 
-import Vue from 'vue';
+import { defineComponent } from "vue";
 import { debugMsg } from '@/helpers';
-export default Vue.extend({
+export default defineComponent({
   name: "Chat",
   props: [
     "place",
@@ -431,7 +431,7 @@ export default Vue.extend({
     "sharedObjects",
     "clickId",
   ],
-  data: () => {
+  data() {
     return {
       message: "",
       messages: [],
@@ -499,7 +499,7 @@ export default Vue.extend({
   },
   directives: {
     focus: {
-      inserted: function (el) {
+      mounted: function (el: any) {
         el.focus()
       }
     }
@@ -1267,7 +1267,7 @@ export default Vue.extend({
   computed: {
     connected: function() { return this.$socket.connected; },
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.setTimers(false);
   },
   mounted() {

@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent, defineAsyncComponent, markRaw } from "vue";
 
 import * as avatarsDataJson from "../../libs/data/avatars.json";
 import * as worldDataJson from "../../libs/data/worlds.json";
@@ -44,7 +44,7 @@ import {
 } from "@/helpers";
 import { WorldBrowserData } from "./world-browser-data.interface";
 
-export default Vue.extend({
+export default defineComponent({
   name: "WorldBrowserPage",
   components: { Chat },
   data: (): WorldBrowserData => {
@@ -246,17 +246,21 @@ export default Vue.extend({
       } else {
 
         if(this.$store.data.place.type === "shop"){
-          this.mainComponent = () => import(
+          this.mainComponent = markRaw(defineAsyncComponent(() => import(
             "@/components/place/mall/main2d.vue"
-          );
+          )));
         } else if(this.$store.data.place.type === "club"){
-          this.mainComponent = () => import(
+          this.mainComponent = markRaw(defineAsyncComponent(() => import(
             "@/components/place/club/main2d.vue"
-          );
+          )));
+        } else if (this.$store.data.place.slug === "home") {
+          this.mainComponent = markRaw(defineAsyncComponent(() => import(
+            "@/components/place/home/main2d.vue"
+          )));
         } else {
-          this.mainComponent = () => import(
+          this.mainComponent = markRaw(defineAsyncComponent(() => import(
             `@/components/place/${this.$store.data.place.slug}/main2d.vue`
-          );
+          )));
         }
         this.loaded = true;
       }
@@ -840,15 +844,21 @@ export default Vue.extend({
     place() {
       this.debugMsg("place changed");
     },
-    position() {
-      this.$socket.emit("AV", {
-        pos: this.position,
-      });
+    position: {
+      handler() {
+        this.$socket.emit("AV", {
+          pos: this.position,
+        });
+      },
+      deep: true,
     },
-    rotation() {
-      this.$socket.emit("AV", {
-        rot: this.rotation,
-      });
+    rotation: {
+      handler() {
+        this.$socket.emit("AV", {
+          rot: this.rotation,
+        });
+      },
+      deep: true,
     },
     sharedEvent: {
       handler() {
@@ -863,7 +873,7 @@ export default Vue.extend({
   mounted() {
     this.startSocketListeners();
   },
-  beforeDestroy() {},
+  beforeUnmount() {},
   async beforeCreate() {
     await this.$socket.start();
   },

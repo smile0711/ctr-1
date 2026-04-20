@@ -6,6 +6,7 @@
     <div class="flex flex-row" >
       <div class="flex flex-auto w-2/3">
         <table class="w-full">
+        <tbody>
           <tr>
             <td class="w-130 font-bold text-left">
               Resident
@@ -39,7 +40,7 @@
             </td>
             <td class="text-left">
               <!-- format Saturday, October 9 1999 -->
-              {{ memberInfo.immigrationDate | dateFormatFilter }}
+              {{ dateFormatFilter(memberInfo.immigrationDate) }}
             </td>
           </tr>
           
@@ -49,7 +50,7 @@
             </td>
             <td class="text-left">
               <!-- format Saturday, October 9 1999 -->
-              {{ memberInfo.lastAccess | dateFormatFilter }}
+              {{ dateFormatFilter(memberInfo.lastAccess) }}
             </td>
           </tr>
 
@@ -81,6 +82,8 @@
             </td>
           </tr>
           -->
+        
+          </tbody>
         </table>
 
       </div>
@@ -115,13 +118,13 @@
 
 <script lang="ts">
 import { dateFormatFilter } from '@/helpers/fiters';
-import Vue from 'vue';
+import { defineComponent } from "vue";
 import Storage from "../../storage/Storage.vue";
 
-export default Vue.extend({
+export default defineComponent({
   name: "HomeMain2d",
   components: { Storage },
-  data: () => {
+  data() {
     return {
       memberInfo: {},
       canAdmin: false,
@@ -131,6 +134,7 @@ export default Vue.extend({
   },
 
   methods: {
+    dateFormatFilter,
     async getData() {
       this.showStorage = false;
       try {
@@ -144,9 +148,10 @@ export default Vue.extend({
       }
     },
     async checkAdmin() {
+      if (!this.$store.data?.place?.block?.id) { return; }
       try {
         await this.$http.get(
-          `/block/${  this.$store.data.place.block.id  }/can_admin`,
+          `/block/${this.$store.data.place.block.id}/can_admin`,
         );
         this.canAdmin = true;
       } catch (e) {

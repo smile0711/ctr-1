@@ -4,6 +4,7 @@
     <img src="../../../assets/img/club/create_club.gif" alt="Create Club" height="100" class="mb-2">
     <form @submit.prevent="createClub">
       <table class="table-auto mx-auto">
+      <tbody>
         <tr class="border-b-8 border-black">
           <td align="right">Club Name:</td>
           <td><input
@@ -25,6 +26,8 @@
             </select>
           </td>
         </tr>
+      
+        </tbody>
       </table>
       <br>
       <textarea
@@ -50,11 +53,11 @@
 </template>
 
 <script>
-import Vue from "vue";
+import { defineComponent } from "vue";
 
-export default Vue.extend({
+export default defineComponent({
   name: "CreateClubPage",
-  data: () => {
+  data() {
     return {
       error: null,
       club: {

@@ -2,7 +2,7 @@
   <Modal>
     <template v-slot:header>
         <button type="button" class="btn-ui-inline" @click="close('Modal closed')">X</button>
-        <button type="button" class="btn-ui-inline" @click="openInfoModal"><</button>
+        <button type="button" class="btn-ui-inline" @click="openInfoModal">&lt;</button>
     </template>
     <template v-slot:body>
       <div class="flex-1">
@@ -13,6 +13,7 @@
         </p>
         <div align="center">
           <table border="0">
+            <tbody>
             <tr>
               <td colspan="2" class="text-center">
                 <font color="#00FF00" size="+1">Change your password</font>
@@ -36,6 +37,7 @@
                 <input type="password" v-model="newPassword2" size="20" />
               </td>
             </tr>
+            </tbody>
           </table>
 
           <button type="button" class="btn" @click="save">Update Password</button>
@@ -46,7 +48,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 
 import Modal from './Modal.vue';
 import ModalMixin from './mixins/ModalMixin';
@@ -54,11 +56,11 @@ import ModalMixin from './mixins/ModalMixin';
 import InfoModal from "./InfoModal.vue";
 import ModalService from "./services/ModalService.vue";
 
-export default Vue.extend({
+export default defineComponent({
   name: "AccountModal",
   components: {Modal},
 
-  data: () => {
+  data() {
     return {
       currentPassword: "",
       newPassword: "",

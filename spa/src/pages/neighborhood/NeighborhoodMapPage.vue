@@ -45,12 +45,12 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 import Chat from "../../components/Chat.vue";
 import { NeighborhoodData } from "./neighborhood-data.interface";
 import { colonyDataHelper } from "@/helpers";
 
-export default Vue.extend({
+export default defineComponent({
   name: "NeighborhoodMapPage",
   components: { Chat },
   data: (): NeighborhoodData => {
@@ -116,7 +116,7 @@ export default Vue.extend({
   mounted() {
     this.loadAndJoinPlace();
   },
-  async beforeDestroy() {
+  async beforeUnmount() {
     await this.unloadPlace();
   },
 });

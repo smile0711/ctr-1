@@ -6,6 +6,7 @@
     <div class="grid justify-items-center w-full" v-else>
       <h1 class="mb-5">Update Club Information</h1>
       <table class="my-5">
+      <tbody>
         <tr>
           <td class="text-right p-2">Name: </td>
           <td class="w-96 p-2">{{ place.name }}</td>
@@ -23,6 +24,8 @@
             </select>
           </td>
         </tr>
+      
+        </tbody>
       </table>
       <div class="flex justify-center w-full">
         <span class="w-full text-center text-red-500" v-if="error">{{ error }}</span>
@@ -37,10 +40,10 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-export default Vue.extend({
+import { defineComponent } from "vue";
+export default defineComponent({
   name: "ClubUpdate",
-  data: () => {
+  data() {
     return {
       place: {} as any,
       updateInfo: {} as any,

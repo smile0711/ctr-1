@@ -42,6 +42,7 @@
       <span class="p-2 font-bold" style="color:lime;" v-if="(pageNum + 5) <= pages.length">. . .</span>
     </div>
     <table class="table-auto border-collapse">
+    <tbody>
       <tr>
         <th class="p-4">ID</th>
         <th class="p-4">Name</th>
@@ -66,6 +67,8 @@
         </td>
         <td v-else></td>
       </tr>
+    
+      </tbody>
     </table>
     <div class="flex w-full justify-center">
       <div class="flex justify-center">
@@ -85,11 +88,11 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 
-export default Vue.extend({
+export default defineComponent({
   name: "PlaceSearch",
-  data: () => {
+  data() {
     return {
       totalCount: 0,
       places: [],

@@ -27,6 +27,7 @@
     <div class="text-2xl p-5">Transaction History</div>
     <div v-if="transactions.length >= 1">
       <table>
+      <tbody>
         <tr>
           <th></th>
           <th>Amount</th>
@@ -37,6 +38,7 @@
         <tr class="border" v-for="transaction in transactions" :key="transaction.id">
           <td class="p-5">
             <table>
+              <tbody>
               <tr>
                 <td class="italic pb-2" v-if="transaction.sender[0].username !== 'System'">Buyer: </td>
                 <td class="italic pb-2" v-else>Sender: </td>
@@ -47,6 +49,8 @@
                 <td class="italic" v-else>Receiver: </td>
                 <td class="text-center text-green font-bold px-2">{{ transaction.receiver[0].username }}</td>
               </tr>
+            
+              </tbody>
             </table>
           </td>
           <td class="p-5 text-center">{{ transaction.amount }} cc</td>
@@ -60,6 +64,7 @@
           </td>
           <td class="p-5 text-center">{{ formatReason(transaction.reason) }}</td>
         </tr>
+        </tbody>
       </table>
     </div>
     <div v-else>No Transactions Found</div>
@@ -85,10 +90,10 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-export default Vue.extend({
+import { defineComponent } from "vue";
+export default defineComponent({
   name: "TransactionHistory",
-  data: () => {
+  data() {
     return {
       transactions: [],
       limit: 10,

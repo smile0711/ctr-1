@@ -1,14 +1,23 @@
 <script lang="ts"   >
-import Vue from 'vue';
+import { reactive } from "vue";
 
-export default new Vue({
-  methods: {
-    open(component, props = {}) {
-      return new Promise((resolve, reject) => {
-        this.$emit('open', { component, props, resolve, reject });
-      });
+const events: any = {};
+
+export default reactive({
+  $on(event, callback) {
+    if (!events[event]) events[event] = [];
+    events[event].push(callback);
+  },
+  $emit(event, payload) {
+    if (events[event]) {
+      events[event].forEach(cb => cb(payload));
     }
+  },
+  open(component, props = {}) {
+    return new Promise((resolve, reject) => {
+      this.$emit('open', { component, props, resolve, reject });
+    });
   }
-})
+});
 
 </script>

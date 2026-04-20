@@ -41,11 +41,11 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 
-export default Vue.extend({
+export default defineComponent({
   name: "BlockTools",
-  data: () => {
+  data() {
     return {
       canAdmin: false,
       loaded: false,
@@ -53,11 +53,14 @@ export default Vue.extend({
   },
   methods: {
     async checkAdmin() {
+      if (!this.$store.data?.place?.block?.id) {
+        return;
+      }
       try {
         const adminCheck = await this.$http.get(
-          `/block/${  this.$store.data.place.block.id  }/can_admin`,
+          `/block/${this.$store.data.place.block.id}/can_admin`,
         );
-        this.canAdmin = adminCheck;
+        this.canAdmin = adminCheck.data ? adminCheck.data.result : adminCheck;
       } catch (e) {
         console.log(e);
       }

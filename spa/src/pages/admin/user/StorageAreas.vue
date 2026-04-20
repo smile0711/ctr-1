@@ -6,6 +6,7 @@
     <div class="text-2xl w-full justify-center text-center p-5">Users Storage Areas</div>
     <div v-if="places.length >= 1">
       <table>
+      <tbody>
         <tr>
           <th>ID</th>
           <th>Name</th>
@@ -15,6 +16,8 @@
           <td class="p-4 text-xl font-bold border">{{ place.id }}</td>
           <td class="p-4 text-xl font-bold border">{{ place.name }}</td>
       </tr>
+      
+        </tbody>
       </table>
     </div>
     <div v-else>No storage areas found.</div>
@@ -22,10 +25,10 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-export default Vue.extend({
+import { defineComponent } from "vue";
+export default defineComponent({
   name: "UserStorageAreas",
-  data: () => {
+  data() {
     return {
       totalCount: 0,
       places: [],

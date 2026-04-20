@@ -58,6 +58,7 @@
     </div>
     <div v-if="accessLevel.includes('admin')">
       <table class="my-5">
+      <tbody>
         <tr>
           <td>Update Name: </td>
           <td class="w-96"><input class="text-black w-full" v-model="newName" type="text" /></td>
@@ -97,6 +98,8 @@
             </select>
           </td>
         </tr>
+      
+        </tbody>
       </table>
       <span class="w-screen" style="color:red;" v-if="error"><center>{{ error }}</center></span>
       <span class="w-screen" style="color:limegreen;" v-if="success"><center>{{ success }}</center></span>
@@ -106,10 +109,10 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-export default Vue.extend({
+import { defineComponent } from "vue";
+export default defineComponent({
   name: "AdminObjectUpdate",
-  data: () => {
+  data() {
     return {
       id: null,
       name: null,

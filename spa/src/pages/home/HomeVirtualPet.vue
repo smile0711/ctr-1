@@ -11,6 +11,7 @@
       <div class="p-5 justify-center text-center text-xl font-bold">
         <div class="grid grid-cols-1 justify-self-center">
           <table>
+          <tbody>
             <tr>
               <td>Pet's Nickname: </td>
               <td>
@@ -62,9 +63,12 @@
               </td>
               <td></td>
             </tr>
+          
+            </tbody>
           </table>
           <div class="w-full text-2xl p-5">Behaviour</div>
           <table class="border w-full" v-if="owner || admin">
+          <tbody>
             <tr>
               <td class="border">
                 Input Text
@@ -91,8 +95,11 @@
                 </div>
               </td>
             </tr>
+          
+            </tbody>
           </table>
           <table class="border w-full" v-else>
+          <tbody>
             <tr>
               <td class="border">
                 Input Text
@@ -119,7 +126,9 @@
                 </div>
               </td>
             </tr>
-          </table>    
+          
+            </tbody>
+          </table>
           <div class="p-5">
             <button class="btn" @click="updatePet">Update</button>
             <button class="btn" @click="$router.go(-1)">Cancel</button>
@@ -155,14 +164,14 @@
 
 <script lang="ts">
   import VirtualPetSelect from '@/components/modals/VirtualPetSelect.vue';
-import Vue from "vue";
+import { defineComponent } from "vue";
 import Modal from '../../components/modals/Modal.vue';
 import ModalService from '@/components/modals/services/ModalService.vue';
 
-export default Vue.extend({
+export default defineComponent({
   name: "HomeVirtualPet",
   components: {Modal},
-  data: () => {
+  data() {
     return {
       loaded: false,
       error: false,

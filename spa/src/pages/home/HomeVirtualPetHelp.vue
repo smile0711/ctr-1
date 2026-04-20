@@ -29,9 +29,9 @@
               would respond.<br><br>
             </li>
             <li> 
-              <dt>
+              <div>
               <B>Directly</B><br>
-              This means that the text is said directly to the Pet, i.e. either:<br></dt>
+              This means that the text is said directly to the Pet, i.e. either:<br></div>
               - somebody typed the Pet's nickname in the text<br>
               - somebody whispered to the Pet<br>
               - somebody has a private chat with the Pet.<br>
@@ -48,11 +48,11 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 
-export default Vue.extend({
+export default defineComponent({
   name: "VirtualPetHelp",
-  data: () => {
+  data() {
     return {
     }
   }

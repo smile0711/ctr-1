@@ -54,6 +54,7 @@
         </p>
         <br />
         <table border="0" v-show="!success">
+        <tbody>
           <tr align="center">
             <td align="center">Email Address</td>
             <td align="center">
@@ -75,6 +76,8 @@
               </button>
             </td>
           </tr>
+        
+          </tbody>
         </table>
         <p v-if="success">
           Please check your email inbox for instructions.
@@ -89,11 +92,11 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from "vue";
 
-export default Vue.extend({
+export default defineComponent({
   name: "ForgotPasswordPage",
-  data: () => {
+  data() {
     return {
       email: "",
       showError: false,

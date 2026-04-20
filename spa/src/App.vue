@@ -137,7 +137,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 
 import WorldBrowserPage from "./pages/world-browser/WorldBrowserPage.vue";
 import ModalRoot from "./components/modals/ModalRoot.vue";
@@ -150,16 +150,16 @@ import InstantMessageModal from './components/modals/InstantMessageModal.vue';
 
 declare const X3D: any;
 
-export default Vue.extend({
+export default defineComponent({
   name: "App",
   components: {
     ClockPage,
     WorldBrowserPage,
     ModalRoot,
   },
-  data: () => {
+  data() {
     return {
-      accessLevel: null,
+      accessLevel: null as any,
       jumpGateData: [
         {
           title: "COLONIES:",
@@ -351,7 +351,7 @@ export default Vue.extend({
     openCitizenOnlineModal(): void {
       ModalService.open(CitizenOnlineModal);
     },
-    openNotificationModal(data): void {
+    openNotificationModal(data: any): void {
       ModalService.open(SecurityAlertModal, {
         data: data.data,
       });
@@ -367,12 +367,12 @@ export default Vue.extend({
       // Add message/alert emit to all online City Guide members containing username and place the member is calling from.
     },
     securityListener(): void {
-      this.$socket.on("new-security-alert", data => {
+      this.$socket.on("new-security-alert", (data: any) => {
         this.openNotificationModal(data);
       });
     },
     moderationListener(): void {
-      this.$socket.on("moderation_event", data => {
+      this.$socket.on("moderation_event", (data: any) => {
         if(
           data.data.event === 'add-ban' && 
           Number.parseInt(data.data.member_id) === this.$store.data.user.id &&
@@ -388,14 +388,14 @@ export default Vue.extend({
       });
     },
     instantMessagingListener(): void {
-      this.$socket.on("instant-message-received", data => {
+      this.$socket.on("instant-message-received", (data: any) => {
         this.receivedInstantMessage();
       })
     },
     async checkAccessLevel() {
       try {
         await this.$http.get(`/member/getadminlevel`)
-          .then((response) => {
+          .then((response: any) => {
             this.accessLevel = response.data.accessLevel;
             if(this.accessLevel.includes('security')){
               this.securityListener();
@@ -417,7 +417,7 @@ export default Vue.extend({
         console.log("starting X3d");
         this.$store.data.x3dReady = true;
       },
-      (error) => {
+      (error: any) => {
         console.error(error);
       },
     );

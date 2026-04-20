@@ -22,6 +22,7 @@
           </p>
         </div>
         <table>
+        <tbody>
 
           <tr>
             <td><strong>House Name</strong></td>
@@ -43,14 +44,16 @@
             <td><input maxlength="32" size="32" v-model="lastName"/></td>
           </tr>
 
+        
+          </tbody>
         </table>
 
         <hr class="my-5" />
         <h3 class="font-bold mb-3">Choose a free 2D House</h3>
         <div class="grid grid-cols-3 gap-4">
           <template v-if="colonyData[colony.slug].map_theme === 'grass'">
-            <template v-for="index in 33">
-              <div :key="index">
+            <template v-for="index in 33" :key="index">
+              <div>
               <input type="radio" :value="index" v-model="icon2d">
               <img
                 class="ml-2"
@@ -60,8 +63,8 @@
             </template>
           </template>
           <template v-else-if="colonyData[colony.slug].map_theme === 'desert'">
-            <template v-for="index in 7">
-              <div :key="index">
+            <template v-for="index in 7" :key="index">
+              <div>
               <input type="radio" :value="index" v-model="icon2d">
               <img
                 class="ml-2"
@@ -71,8 +74,8 @@
             </template>
           </template>
           <template v-else-if="colonyData[colony.slug].map_theme === 'cyberhood'">
-            <template v-for="index in 5">
-              <div :key="index">
+            <template v-for="index in 5" :key="index">
+              <div>
               <input type="radio" :value="index" v-model="icon2d">
               <img
                 class="ml-2"
@@ -98,8 +101,8 @@
             <input type="radio" v-model="home3d" class="mr-3"/>None
           </div>
           <div></div>
-          <template v-for="(item,key) in homeData" >
-            <div :key="key">
+          <template v-for="(item,key) in homeData" :key="key">
+            <div>
               <input type="radio" :value="key" v-model="home3d" class="mr-3"/>
               <img :src="'/assets/img/homes/Picon3D' + key + '.gif'" /><br/>
               Price: <strong>{{ item.price }}cc</strong>
@@ -133,17 +136,17 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from 'vue';
 import { colonyDataHelper, homeDataHelper } from "@/helpers";
 
-export default Vue.extend({
+export default defineComponent({
   name: "BlockMovePage",
   props: [
     "block",
     "hood",
     "colony",
   ],
-  data: () => {
+  data() {
     return {
       loaded: false,
       showError: false,
@@ -173,7 +176,6 @@ export default Vue.extend({
         this.locations = response[0].data.locations;
         this.homeResponse = response[1].data;
         this.donorLevel = response[2].data.name;
-        console.log(this.donorLevel);
 
         if(this.donorLevel === "Champion"){
           this.homeData.championhome.price = 0;
